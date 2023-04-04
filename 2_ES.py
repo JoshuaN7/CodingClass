@@ -14,8 +14,8 @@ import random
 print("{0:-^50}".format(" Règles du jeu "))
 print("\nLe but du jeu est de prédire le gagnant du jeu.")
 print("Tu peut parier l'ordinateur, le joueur ou un match nul. Tu commences avec 100$")
-print("-Si un des joueurs obteiennent 3 dés identiques, ils gangnet 8 points de plus sur leur somme des dés.")
-print("-Si un des joueurs obteiennent 3 dés différents, ils gangnet 8 points de plus sur leur somme des dés.")
+print("-Si un des joueurs obtiennent 3 dés identiques, ils gangnent 8 points de plus sur leur somme des dés.")
+print("-Si un des joueurs obtiennent 3 dés différents, ils gangnent 5 points de plus sur leur somme des dés.")
 
 # - Le Jeu
 
@@ -163,7 +163,7 @@ def jeu():
         print("\n{0:-^50}".format(" Argent "))
         print("\nVous avez perdu tout votre argent!")
         print("\n{0:-^50}".format(" Fin du jeu "))
-        
+
         # - Demander si le joueur veut rejouer
         rejouer()
         
