@@ -39,7 +39,11 @@ def prédire():
     print("1 - Ordinateur")
     print("2 - Joueur")
     print("3 - Match nul")
-    p = int(input("\nVotre choix: "))
+    try:
+        p = int(input("\nVotre choix: "))
+    except ValueError:
+        print("\nVous devez choisir un nombre entre 1 et 3!")
+        prédire()
 
     # - Prendre en compte les exceptions
     if p in [1, 2, 3]:
@@ -52,7 +56,11 @@ def prédire():
             prédire()
         else:
             jeu()
+
     # - Si le joueur n'a pas entré un nombre entre 1 et 3
+    elif not isinstance(p, int):
+        print("\nVous devez choisir un nombre entre 1 et 3!")
+        prédire()
     else:
         print("\nVous devez choisir un nombre entre 1 et 3!")
         prédire()
@@ -79,6 +87,7 @@ def rejouer():
     # - Si le joueur veut quitter
     elif re == "q":
         print("\nMerci d'avoir joué!")
+        exit()
     
     # - Si le joueur n'a pas appuyé sur la touche 'Entrée' ou sur 'q'
     else:
