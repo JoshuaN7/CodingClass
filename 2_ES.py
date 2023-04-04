@@ -9,14 +9,6 @@
 # - Importation de modules
 import random
 
-
-# - Règles du jeu
-print("{0:-^50}".format(" Règles du jeu "))
-print("\nLe but du jeu est de prédire le gagnant du jeu.")
-print("Tu peut parier l'ordinateur, le joueur ou un match nul. Tu commences avec 100$")
-print("-Si un des joueurs obtiennent 3 dés identiques, ils gangnent 8 points de plus sur leur somme des dés.")
-print("-Si un des joueurs obtiennent 3 dés différents, ils gangnent 5 points de plus sur leur somme des dés.")
-
 # - Le Jeu
 
 # - Définir les variables globales
@@ -26,6 +18,14 @@ a_d = None
 # - Si le joueur a gagné ou perdu l'argent prendre la valeur de l'argent restant
 if a_d == None:
     a_d = a_init
+
+# - Règles du jeu
+print("{0:-^50}".format(" Règles du jeu "))
+print("\nLe but du jeu est de prédire le gagnant du jeu.")
+print("Tu peut parier l'ordinateur, le joueur ou un match nul. Tu commences avec {}$".format(a_init))
+print("-Si un des joueurs obtiennent 3 dés identiques, ils gangnent 8 points de plus sur leur somme des dés.")
+print("-Si un des joueurs obtiennent 3 dés différents, ils gangnent 5 points de plus sur leur somme des dés.")
+
 
 # - Demander au joueur de prédire le résultat
 def prédire():
