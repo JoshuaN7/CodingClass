@@ -18,15 +18,19 @@ print("-Si un des joueurs obteiennent 3 dés identiques, ils gangnet 8 points de
 print("-Si un des joueurs obteiennent 3 dés différents, ils gangnet 8 points de plus sur leur somme des dés.")
 
 # - Le Jeu
+
 # - Définir les variables globales
 a_init = 100
 # - Si le jeu vient d'être commencé et le joueur n'as pas encore gagné ou perdu l'argent prendre la valeur 100 comme le montant de départ
 a_d = None
+# - Si le joueur a gagné ou perdu l'argent prendre la valeur de l'argent restant
 if a_d == None:
     a_d = a_init
 
+# - Demander au joueur de prédire le résultat
 def prédire():
 
+    # - Définir les variables globales
     global a, p, a_init, a_d
 
     # - Demander au jouer de prédire le résultat
@@ -53,9 +57,40 @@ def prédire():
         print("\nVous devez choisir un nombre entre 1 et 3!")
         prédire()
 
+# - Demander si le joueur veut rejouer
+def rejouer():
+
+    # - Définir les variables globales
+    global a_d, a_init
+
+    # - Demander si le joueur veut rejouer
+    re = input("\nPour rejouer, appuyez sur la touche 'Entrée', si vous voulez quitter, appuyez sur 'q'.")
+    if re == "":
+    
+    # - Si le joueur a gagné ou perdu l'argent prendre la valeur de l'argent restant
+        if a_d <= 0:
+            a_d = a_init
+            prédire()
+            jeu()
+        else:
+            prédire()
+            jeu()
+
+    # - Si le joueur veut quitter
+    elif re == "q":
+        print("\nMerci d'avoir joué!")
+    
+    # - Si le joueur n'a pas appuyé sur la touche 'Entrée' ou sur 'q'
+    else:
+        print("\nVous devez appuyer sur la touche 'Entrée' ou sur 'q'!")
+        rejouer()
+
+# - Le jeu de base
 def jeu():
 
+    # - Définir les variables globales
     global a, p, a_init, a_d, rf
+
     # - Lancer les dés de l'ordinateur 
     d_o_1 = random.randint(1, 6)
     d_o_2 = random.randint(1, 6)
@@ -102,6 +137,7 @@ def jeu():
         elif p == 2 or p == 3:
             a_d -= a
             rf = ("\nVous avez perdu {}$!".format(a))
+
     # - Si le joueur a gagné
     elif r == "Le joueur a gagné!":
         if p == 2:
@@ -110,6 +146,7 @@ def jeu():
         elif p == 1 or p == 3:
             a_d -= a
             rf = ("\nVous avez perdu {}$!".format(a))
+
     # - Si le match est nul
     elif r == "Match nul!":
         if p == 3:
@@ -126,14 +163,9 @@ def jeu():
         print("\n{0:-^50}".format(" Argent "))
         print("\nVous avez perdu tout votre argent!")
         print("\n{0:-^50}".format(" Fin du jeu "))
+        
         # - Demander si le joueur veut rejouer
-        re = input("\nPour rejouer, appuyez sur la touche 'Entrée', si vous voulez quitter, appuyez sur 'q'.")
-        if re == "":
-            a_d = a_init
-            prédire()
-            jeu()
-        elif re == "q":
-            print("\nMerci d'avoir joué!")
+        rejouer()
         
     # - Présenter les résultats
     print("\n{0:-^50}\n".format(" Résultats "))
@@ -143,14 +175,8 @@ def jeu():
     print("{0:-^50}".format(" Argent "))
     print(rf)
     print("\nVous avez maintenant {}$.".format(a_d))
+    rejouer()
 
-    # - Demander si le joueur veut rejouer
-    re = input("\nPour rejouer, appuyez sur la touche 'Entrée', si vous voulez quitter, appuyez sur 'q'.")
-    if re == "":
-        prédire()
-        jeu()
-    elif re == "q":
-        print("\nMerci d'avoir joué!")
 
 # - Appel de la fonction
 prédire()
