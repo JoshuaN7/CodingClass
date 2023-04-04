@@ -39,6 +39,8 @@ def prédire():
     print("1 - Ordinateur")
     print("2 - Joueur")
     print("3 - Match nul")
+
+    # - Prendre en compte les exceptions si p n'est pas un nombre
     try:
         p = int(input("\nVotre choix: "))
     except ValueError:
