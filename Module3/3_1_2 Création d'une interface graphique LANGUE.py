@@ -30,21 +30,21 @@ fenetre.configure(bg = "#ffffff")
 btnAnglais = tk.Button(fenetre)
 btnAnglais ['text'] = "Anglais"
 btnAnglais ['font'] = ["Arial", 20]
-btnAnglais ['command'] = cliqueAnglais()
+btnAnglais ['command'] = cliqueAnglais
 btnAnglais.pack()
 
 # - Francais
 btnFrancais = tk.Button(fenetre)
 btnFrancais ['text'] = "Francais"
 btnFrancais ['font'] = ["Arial", 20]
-btnFrancais ['command'] = cliqueFrancais()
+btnFrancais ['command'] = cliqueFrancais
 btnFrancais.pack()
 
 # - Espanol
 btnEspanol = tk.Button(fenetre)
 btnEspanol ['text'] = "Espanol"
 btnEspanol ['font'] = ["Arial", 20]
-btnEspanol ['command'] = cliqueEspanol()
+btnEspanol ['command'] = cliqueEspanol
 btnEspanol.pack()
 
 # - Mot
