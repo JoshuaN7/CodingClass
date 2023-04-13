@@ -15,6 +15,9 @@ def cliqueAnglais():
 
 def cliqueFrancais():
     lblMot ['text'] = "Bonjour"
+
+def cliqueEspanol():
+    lblMot ['text'] = "Hola"
     
 
 # - Fenêtre  
@@ -30,12 +33,29 @@ btnAnglais ['font'] = ["Arial", 20]
 btnAnglais ['command'] = cliqueAnglais()
 btnAnglais.pack()
 
-# - Anglais
+# - Francais
 btnFrancais = tk.Button(fenetre)
 btnFrancais ['text'] = "Francais"
 btnFrancais ['font'] = ["Arial", 20]
 btnFrancais ['command'] = cliqueFrancais()
 btnFrancais.pack()
+
+# - Espanol
+btnEspanol = tk.Button(fenetre)
+btnEspanol ['text'] = "Espanol"
+btnEspanol ['font'] = ["Arial", 20]
+btnEspanol ['command'] = cliqueEspanol()
+btnEspanol.pack()
+
+# - Mot
+lblMot = tk.Label(fenetre)
+lblMot ['text'] = "Bonjour"
+lblMot ['font'] = ["Arial", 30, "bold"]
+lblMot ['bg'] = "#ffffff"
+lblMot.pack()
+
+fenetre.mainloop()
+
 
 
 
