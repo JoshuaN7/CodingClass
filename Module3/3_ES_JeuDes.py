@@ -24,15 +24,28 @@ cadreArgent = tk.Frame(fenetre)
 
 # - Options cadreChoix
 cadreChoix['background'] = "#c900cc"
-cadreChoix.grid(row=0, column=0,columnspan=3, sticky="nsew")
+cadreChoix.grid(row=0, column=0,columnspan=5, sticky="nsew")
 
 # - Options cadreResultat
-cadreResultat['background'] = "#ffffff"
-cadreResultat.grid(row=1, column=0, rowspan=3, columnspan=3, sticky="nsew")
+cadreResultat['background'] = "#ff276c"
+cadreResultat.grid(row=1, column=0, rowspan=3, columnspan=5, sticky="nsew")
 
 # - Options cadreArgent
 cadreArgent['background'] = "#0000FF"
-cadreArgent.grid(row=0, column=4, rowspan=4, sticky="nsew")
+cadreArgent.grid(row=0, column=5, rowspan=4, sticky="nsew")
+
+# - Configuration des lignes et colonnes
+fenetre.columnconfigure(0, weight=1)
+fenetre.columnconfigure(1, weight=1)
+fenetre.columnconfigure(2, weight=1)
+fenetre.columnconfigure(3, weight=1)
+fenetre.columnconfigure(4, weight=1)
+fenetre.columnconfigure(5, weight=1)
+fenetre.rowconfigure(0, weight=1)
+fenetre.rowconfigure(1, weight=1)
+fenetre.rowconfigure(2, weight=1)
+fenetre.rowconfigure(3, weight=1)
+fenetre.rowconfigure(4, weight=1)
 
 # - Titre pour cadreChoix
 lblChoix = tk.Label(cadreChoix)
