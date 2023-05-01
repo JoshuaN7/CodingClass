@@ -12,10 +12,35 @@ import tkinter as tk
 # - Variables globales
 argent = 100
 rondes = 0
-prediction = 0
+
 
 # - Déclaration des fonctions
 def lancer():
+    # - Verifier si l'argent parié est un nombre
+    global prediction
+    if pari.get().isdigit():
+        print("Nombre")
+        lblArgentError['text'] = ""
+        if int(pari.get()) > argent:
+            print("Pas assez d'argent")
+            lblArgentError['text'] = "Vous n'avez pas assez d'argent"
+        else:
+            print("Assez d'argent")
+            lblArgentError['text'] = ""
+            # - Lancer les dés
+            # - Si Alex est prédit
+            if prediction == "1":
+                print("Prédiction Alex")
+            # - Si Charles est prédit
+            elif prediction == "2":
+                print("Prédiction Charles")
+            # - Si Nul est prédit
+            elif prediction == "3":
+                print("Prédiction Nul")
+    else:
+        print("Pas un nombre")
+        lblArgentError['text'] = "Veuillez entrer un nombre"
+
     print("Lancer")
     print(pari.get())
 
@@ -68,12 +93,17 @@ lblChoix['font'] = ["Calibri", 20, "bold"]
 lblChoix['bg'] = "#ffffff"
 lblChoix.grid(row=0,column=0,columnspan=3, padx=250)
 
+# - Variable pour prediction
+global prediction
+
+prediction = tk.StringVar()
+
 # - Option Alex
 radAlex = tk.Radiobutton(cadreChoix)
 radAlex['text'] = "Alex"
 radAlex['font'] = ["Calibri", 15, "bold"]
 radAlex['bg'] = "#ffffff"
-radAlex['value'] = 1
+radAlex['value'] = "1"
 radAlex['variable'] = prediction
 radAlex.select()
 radAlex.grid(row=1,column=0)
@@ -83,7 +113,7 @@ radCharles = tk.Radiobutton(cadreChoix)
 radCharles['text'] = "Charles"
 radCharles['font'] = ["Calibri", 15, "bold"]
 radCharles['bg'] = "#ffffff"
-radCharles['value'] = 2
+radCharles['value'] = "2"
 radCharles['variable'] = prediction
 radCharles.grid(row=1,column=1)
 
@@ -92,7 +122,7 @@ radEgalite = tk.Radiobutton(cadreChoix)
 radEgalite['text'] = "Égalité"
 radEgalite['font'] = ["Calibri", 15, "bold"]
 radEgalite['bg'] = "#ffffff"
-radEgalite['value'] = 3
+radEgalite['value'] = "3"
 radEgalite['variable'] = prediction
 radEgalite.grid(row=1,column=2)
 
@@ -123,11 +153,11 @@ lblArgent = tk.Label(cadreArgent)
 lblArgent['text'] = str(argent) + "$"
 lblArgent['font'] = ["Calibri", 15, "bold"]
 lblArgent['bg'] = "#ffffff"
-lblArgent.grid(row=1,column=0,columnspan=2, padx=20)
+lblArgent.grid(row=1,column=0,columnspan=2)
 
 # - Argent parié
 lblArgentParie = tk.Label(cadreArgent)
-lblArgentParie['text'] = "Argent parié"
+lblArgentParie['text'] = "Pari"
 lblArgentParie['font'] = ["Calibri", 15, "bold"]
 lblArgentParie['bg'] = "#ffffff"
 lblArgentParie.grid(row=2,column=0,columnspan=2)
@@ -140,9 +170,11 @@ entArgent['bg'] = "#ffffff"
 entArgent['textvariable'] = pari
 entArgent.grid(row=3,column=0,columnspan=2, padx=20)
 
-
-
-
-
+# - Argent Error
+lblArgentError = tk.Label(cadreArgent)
+lblArgentError['text'] = ""
+lblArgentError['font'] = ["Calibri", 15, "bold"]
+lblArgentError['bg'] = "#ffffff"
+lblArgentError.grid(row=4,column=0,columnspan=2)
 
 fenetre.mainloop()
