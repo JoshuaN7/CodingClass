@@ -17,6 +17,8 @@ rondes = 0
 alex = 0
 charles = 0
 nul = 0
+gagne = 0
+pourcentage = 0
 personne = []
 
 
@@ -30,8 +32,8 @@ if argent == None:
 
 # - Jouer
 
-def jouer():
-    global argent, personne, mpari, rondes, alex, charles, nul
+def jouer(event=None):
+    global argent, personne, mpari, rondes, alex, charles, nul, gange, pourcentage
 
     # - Verifier si l'argent parié est un nombre
     if pari.get().isdigit():
@@ -64,7 +66,7 @@ def jouer():
 # - Lancer les dés
 def lancer():
     # - Vairables globales
-    global argent, personne, rf, mpari, rondes, alex, charles, nul
+    global argent, personne, rf, mpari, rondes, alex, charles, nul, gagne, pourcentage
 
     # - Afficher le nombre de rondes
     rondes+=1
@@ -132,7 +134,7 @@ def lancer():
     if r == "Alex a gagné!":
         if personne == 1:
             argent += mpari
-
+            gagne += 1
             lblArgentRestant['text'] = ("\nVous avez gagné {}$!".format(mpari))
         elif personne == 2 or personne == 3:
             argent -= mpari
@@ -142,6 +144,7 @@ def lancer():
     elif r == "Charles a gagné!":
         if personne == 2:
             argent += mpari
+            gagne += 1
             lblArgentRestant['text'] = ("\nVous avez gagné {}$!".format(mpari))
         elif personne == 1 or personne == 3:
             argent -= mpari
@@ -151,6 +154,7 @@ def lancer():
     elif r == "Match nul!":
         if personne == 3:
             argent += mpari
+            gagne += 1
             lblArgentRestant['text'] = ("\nVous avez gagné {}$!".format(mpari))
         elif personne == 1 or personne == 2:
             argent -= mpari
@@ -160,17 +164,162 @@ def lancer():
     else:
         print("Erreur")
 
-    # # - Si le joueur a perdu tout son argent
-    # if argent <= 0:
-    #     print("\n{0:-^50}\n".format(" Résultats "))
-    #     print("Dés d'Alex: {} - {} - {}\nScore final d'Alex: {}".format(d_o_1, d_o_2, d_o_3, r_o))
-    #     print("\nDés de Charles: {} - {} - {}\nScore final de Charles: {}".format(d_j_1, d_j_2, d_j_3, r_j))
-    #     print("\n" + r)
-    #     print("{0:-^50}".format(" Argent "))
-    #     print(rf)
-    #     print("\nVous avez maintenant {}$.".format(argent))
-    #     print("\nVous avez perdu tout votre argent!")
-    #     print("\n{0:-^50}".format(" Fin du jeu "))
+    # - Si le joueur a perdu tout son argent
+    if argent <= 0:
+        # - Afficher que le joueur a perdu tout son argent
+        lblArgentRestant['fg'] = "#ff0000"
+        lblArgentRestant['text'] = ("\nVous avez perdu tout votre argent!\nClicquez sur rejouer pour recommencer!")
+        # - Activer le bouton pour recommencer
+        btnRejouer['state'] = "normal"
+
+    # - Changer le texte pour lblArgent 
+    lblArgent['text'] = str(argent) + "$"
+
+    # - Pourcentage
+    pourcentage = (int(gagne) / int(rondes)) * 100
+    lblPourcentage['text'] = "% de rondes gagnées: {:.2f}%".format(pourcentage)
+
+# - Rejouer
+def rejouer():
+    # - Variables globales
+    global argent, personne, rf, mpari, rondes, alex, charles, nul, pourcentage, gagne, rondes
+    # - Réinitialiser les variables
+    argent = 100
+    rondes = 0
+    alex = 0
+    charles = 0
+    nul = 0
+    gagne = 0
+    rondes = 0
+    pourcentage = 0
+    # - Effacer les entrées
+    entArgent.delete(0, tk.END)
+
+    # - Changer l'état du bouton rejouer
+    btnRejouer['state'] = "disabled"
+
+    # - Réinitialiser les labels
+    lblArgent['text'] = str(argent) + "$"
+    lblArgentRestant['text'] = ""
+    lblAlex1['text'] = "0"
+    lblAlex2['text'] = "0"
+    lblAlex3['text'] = "0"
+    lblCharles1['text'] = "0"
+    lblCharles2['text'] = "0"
+    lblCharles3['text'] = "0"
+    lblAlex['text'] = "Dés d'Alex: 0"
+    lblCharles['text'] = "Dés de Charles: 0"
+    lblGagnant['text'] = ""
+    lblGagnant['fg'] = "#000000"
+    lblArgentRestant['fg'] = "#000000"
+    lblRondes['text'] = "Rondes: {}".format(rondes)
+    lblVictoiresAlex['text'] = "Victoires Alex: {}".format(alex)
+    lblVictoiresCharles['text'] = "Victoires Charles: {}".format(charles)
+    lblVictoiresNulles['text'] = "Match nul: {}".format(nul)
+    lblPourcentage['text'] = "% de rondes gagnées: {:.2f}%".format(pourcentage)
+
+def regles():
+    # - Créer le cadre
+    cadreRegles = tk.Frame(fenetre)
+    cadreRegles['background'] = "#ffffff"
+    cadreRegles['relief'] = "groove"
+    cadreRegles['borderwidth'] = 3
+    cadreRegles.grid(row=0, column=0, rowspan=5, columnspan=6, sticky="nsew")
+
+    # - Afficher le titre
+    lblRegles = tk.Label(cadreRegles)
+    lblRegles['text'] = "Règles du jeu"
+    lblRegles['font'] = ("Arial", 20)
+    lblRegles['fg'] = "#000000"
+    lblRegles['bg'] = "#ffffff"
+    lblRegles.grid(row=0, column=2, columnspan=2, pady=50)
+
+    # - Afficher les règles
+    lblRegles1 = tk.Label(cadreRegles)
+    lblRegles1['text'] = "-Le but du jeu est de prédire le gagnant du jeu.\n-Tu peut parier sur Alex, Charles ou un match nul.\n-Tu commences avec {}$\n-Si un des joueurs obtiennent 3 dés identiques, ils gangnent \n8 points de plus sur leur somme des dés.\n-Si un des joueurs obtiennent 3 dés différents, ils gangnent \n5 points de plus sur leur somme des dés.".format(argent_defaut)
+    lblRegles1['font'] = ("Arial", 15)
+    lblRegles1['fg'] = "#000000"
+    lblRegles1['bg'] = "#ffffff"
+    lblRegles1.grid(row=1, column=2, columnspan=2, padx=70, pady=20)
+
+    # - Boutton pour retourner au jeu
+    btnRetour = tk.Button(cadreRegles)
+    btnRetour['text'] = "Retour"
+    btnRetour['font'] = ("Arial", 15)
+    btnRetour['fg'] = "#000000"
+    btnRetour['bg'] = "#ffffff"
+    btnRetour['command'] = cadreRegles.destroy
+    btnRetour.grid(row=2, column=2, columnspan=2, pady=20)
+
+def changerValeurs():
+
+    # - Enregistrer les valeurs
+    def enregistrer():
+        # - Variables globales
+        global argent_defaut, mpari_defaut, rondes_defaut, argent
+
+
+        if entArgentDefaut.get().isdigit():
+
+            # - Recommenncer le jeu
+            rejouer()
+
+            # - Enregistrer les valeurs
+            argent_defaut = int(entArgentDefaut.get())
+            argent = argent_defaut
+        
+            # - Détruire le cadre
+            cadreValeurs.destroy()
+            lblArgent['text'] = str(argent) + "$"
+        else:
+            # - Afficher un message d'erreur
+            lblArgentDefautErreur['text'] = "Veuillez entrer un nombre!"
+
+    cadreValeurs = tk.Frame(fenetre)
+    cadreValeurs['background'] = "#ffffff"
+    cadreValeurs['relief'] = "groove"
+    cadreValeurs['borderwidth'] = 3
+    cadreValeurs.grid(row=0, column=0, rowspan=5, columnspan=6, sticky="nsew")
+
+    # - Afficher le titre
+    lblValeurs = tk.Label(cadreValeurs)
+    lblValeurs['text'] = "Changer les valeurs par défaut: "
+    lblValeurs['font'] = ("Arial", 20)
+    lblValeurs['bg'] = "#ffffff"
+    lblValeurs['fg'] = "#000000"
+    lblValeurs.grid(row=0, column=2, columnspan=2, padx=150)
+
+    # - Argent Defaut
+    lblArgentDefaut = tk.Label(cadreValeurs)
+    lblArgentDefaut['text'] = "Argent par défaut:"
+    lblArgentDefaut['font'] = ("Arial", 15)
+    lblArgentDefaut['bg'] = "#ffffff"
+    lblArgentDefaut['fg'] = "#000000"
+    lblArgentDefaut.grid(row=1, column=2, pady=50)
+
+    # - Entrée pour changer les valeurs
+    entArgentDefaut = tk.Entry(cadreValeurs)
+    entArgentDefaut['font'] = ("Arial", 15)
+    entArgentDefaut['bg'] = "#ffffff"
+    entArgentDefaut['fg'] = "#000000"
+    entArgentDefaut.grid(row=1, column=3)
+
+    # - Erreur
+    lblArgentDefautErreur = tk.Label(cadreValeurs)
+    lblArgentDefautErreur['text'] = ""
+    lblArgentDefautErreur['font'] = ("Arial", 15)
+    lblArgentDefautErreur['fg'] = "#ff0000"
+    lblArgentDefautErreur['bg'] = "#ffffff"
+    lblArgentDefautErreur.grid(row=2, column=2, columnspan=2)
+
+    # - Boutton pour enregistrer les valeurs
+    btnEnregistrer = tk.Button(cadreValeurs)
+    btnEnregistrer['text'] = "Enregistrer"
+    btnEnregistrer['font'] = ("Arial", 15)
+    btnEnregistrer['bg'] = "#ffffff"
+    btnEnregistrer['fg'] = "#000000"
+    btnEnregistrer['command'] = enregistrer
+    btnEnregistrer.grid(row=3, column=2, columnspan=2)
 
 # - Fenetre
 fenetre = tk.Tk()
@@ -287,6 +436,7 @@ btnLancer['bg'] = "#ffffff"
 btnLancer['fg'] = "#000000"
 btnLancer['command'] = jouer
 btnLancer.grid(row=4,column=0, pady=10)
+fenetre.bind("<Return>", jouer)
 
 # - Bouton pour recommencer
 btnRejouer = tk.Button(cadreChoix)
@@ -464,5 +614,12 @@ lblVictoiresNulles['bg'] = "#ffffff"
 lblVictoiresNulles['fg'] = "#000000"
 lblVictoiresNulles.grid(row=4,column=0)
 
+# - Pourcentage de rondes gagnées 
+lblPourcentage = tk.Label(cadreScore)
+lblPourcentage['text'] = "% de rondes gagnées: {:.2f}%".format(pourcentage)
+lblPourcentage['font'] = ["Calibri", 15]
+lblPourcentage['bg'] = "#ffffff"
+lblPourcentage['fg'] = "#000000"
+lblPourcentage.grid(row=5,column=0)
 
 fenetre.mainloop()
