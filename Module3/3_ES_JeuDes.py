@@ -33,8 +33,8 @@ if argent == None:
 
 def jouer():
     global argent, personne, mpari, rondes, alex, charles, nul
-    # - Verifier si l'argent parié est un nombre
 
+    # - Verifier si l'argent parié est un nombre
     if pari.get().isdigit():
         lblArgentError['text'] = ""
         if int(pari.get()) > argent:
@@ -60,7 +60,6 @@ def jouer():
             # - Lancer les dés
             lancer()
     else:
-        print("Pas un nombre")
         lblArgentError['text'] = "Veuillez entrer un nombre"
 
 # - Lancer les dés
@@ -180,6 +179,11 @@ def rejouer():
     alex = 0
     charles = 0
     nul = 0
+    # - Effacer les entrées
+    entArgent.delete(0, tk.END)
+
+    # - Changer l'état du bouton rejouer
+    btnRejouer['state'] = "disabled"
 
     # - Réinitialiser les labels
     lblArgent['text'] = str(argent) + "$"
@@ -198,11 +202,121 @@ def rejouer():
     lblVictoiresCharles['text'] = "Victoires Charles: {}".format(charles)
     lblVictoiresNulles['text'] = "Match nul: {}".format(nul)
 
+def regles():
+    # - Créer le cadre
+    cadreRegles = tk.Frame(fenetre)
+    cadreRegles['background'] = "#ffffff"
+    cadreRegles['relief'] = "groove"
+    cadreRegles['borderwidth'] = 3
+    cadreRegles.grid(row=0, column=0, rowspan=5, columnspan=6, sticky="nsew")
+
+    # - Afficher le titre
+    lblRegles = tk.Label(cadreRegles)
+    lblRegles['text'] = "Règles du jeu"
+    lblRegles['font'] = ("Arial", 20)
+    lblRegles['fg'] = "#000000"
+    lblRegles['bg'] = "#ffffff"
+    lblRegles.grid(row=0, column=2, columnspan=2, pady=50)
+
+    # - Afficher les règles
+    lblRegles1 = tk.Label(cadreRegles)
+    lblRegles1['text'] = "-Le but du jeu est de prédire le gagnant du jeu.\n-Tu peut parier sur Alex, Charles ou un match nul.\n-Tu commences avec {}$\n-Si un des joueurs obtiennent 3 dés identiques, ils gangnent \n8 points de plus sur leur somme des dés.\n-Si un des joueurs obtiennent 3 dés différents, ils gangnent \n5 points de plus sur leur somme des dés.".format(argent_defaut)
+    lblRegles1['font'] = ("Arial", 15)
+    lblRegles1['fg'] = "#000000"
+    lblRegles1['bg'] = "#ffffff"
+    lblRegles1.grid(row=1, column=2, columnspan=2, padx=70, pady=20)
+
+    # - Boutton pour retourner au jeu
+    btnRetour = tk.Button(cadreRegles)
+    btnRetour['text'] = "Retour"
+    btnRetour['font'] = ("Arial", 15)
+    btnRetour['bg'] = "#ffffff"
+    btnRetour['command'] = cadreRegles.destroy
+    btnRetour.grid(row=2, column=2, columnspan=2, pady=20)
+
+def changerValeurs():
+
+    # - Enregistrer les valeurs
+    def enregistrer():
+        # - Variables globales
+        global argent_defaut, mpari_defaut, rondes_defaut, argent
+
+
+        if entArgentDefaut.get().isdigit():
+            # - Enregistrer les valeurs
+            argent_defaut = int(entArgentDefaut.get())
+            argent = argent_defaut
+            # - Détruire le cadre
+            cadreValeurs.destroy()
+            lblArgent['text'] = str(argent) + "$"
+        else:
+            # - Afficher un message d'erreur
+            lblArgentDefautErreur['text'] = "Veuillez entrer un nombre!"
+
+    cadreValeurs = tk.Frame(fenetre)
+    cadreValeurs['background'] = "#ffffff"
+    cadreValeurs['relief'] = "groove"
+    cadreValeurs['borderwidth'] = 3
+    cadreValeurs.grid(row=0, column=0, rowspan=5, columnspan=6, sticky="nsew")
+
+    # - Afficher le titre
+    lblValeurs = tk.Label(cadreValeurs)
+    lblValeurs['text'] = "Changer les valeurs par défaut: "
+    lblValeurs['font'] = ("Arial", 20)
+    lblValeurs['bg'] = "#ffffff"
+    lblValeurs.grid(row=0, column=2, columnspan=2, padx=150)
+
+    # - Argent Defaut
+    lblArgentDefaut = tk.Label(cadreValeurs)
+    lblArgentDefaut['text'] = "Argent par défaut:"
+    lblArgentDefaut['font'] = ("Arial", 15)
+    lblArgentDefaut['bg'] = "#ffffff"
+    lblArgentDefaut.grid(row=1, column=2, pady=50)
+
+    # - Entrée pour changer les valeurs
+    entArgentDefaut = tk.Entry(cadreValeurs)
+    entArgentDefaut['font'] = ("Arial", 15)
+    entArgentDefaut['bg'] = "#ffffff"
+    entArgentDefaut.grid(row=1, column=3)
+
+    # - Erreur
+    lblArgentDefautErreur = tk.Label(cadreValeurs)
+    lblArgentDefautErreur['text'] = ""
+    lblArgentDefautErreur['font'] = ("Arial", 15)
+    lblArgentDefautErreur['fg'] = "#ff0000"
+    lblArgentDefautErreur['bg'] = "#ffffff"
+    lblArgentDefautErreur.grid(row=2, column=2, columnspan=2)
+
+    # - Boutton pour enregistrer les valeurs
+    btnEnregistrer = tk.Button(cadreValeurs)
+    btnEnregistrer['text'] = "Enregistrer"
+    btnEnregistrer['font'] = ("Arial", 15)
+    btnEnregistrer['bg'] = "#ffffff"
+    btnEnregistrer['command'] = enregistrer
+    btnEnregistrer.grid(row=3, column=2, columnspan=2)
+
 # - Fenetre
 fenetre = tk.Tk()
 fenetre.title("Jeu de dés")
 fenetre.geometry("700x500")
 fenetre['bg'] = "#ffffff"
+
+# - Menu
+mnuBarreMenu = tk.Menu(fenetre)
+fenetre['menu'] = mnuBarreMenu
+
+# - Création du menu pour règles
+mnuRegles = tk.Menu(mnuBarreMenu, tearoff=0)
+mnuBarreMenu.add_cascade(label="Aide", menu=mnuRegles)
+mnuRegles.add_command(label="Règles", command=regles)
+
+# - Création du menu pour changer les valeurs par défaut
+mnuOptions = tk.Menu(mnuBarreMenu, tearoff=0)
+mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
+mnuOptions.add_command(label="Changer les valeurs par défaut", command=changerValeurs)
+
+# - Création du menu pour recommencer la joute
+mnuOptions.add_command(label="Recommencer", command=rejouer)
 
 # - Création des cadres
 cadreChoix = tk.Frame(fenetre)
@@ -252,7 +366,7 @@ lblChoix = tk.Label(cadreChoix)
 lblChoix['text'] = "Prédisiez le gagnant du jeu"
 lblChoix['font'] = ["Calibri", 20, "bold"]
 lblChoix['bg'] = "#ffffff"
-lblChoix.grid(row=0,column=0, padx=30)
+lblChoix.grid(row=0,column=0, columnspan=3, padx=30)
 
 prediction = tk.StringVar()
 
@@ -264,7 +378,7 @@ radAlex['bg'] = "#ffffff"
 radAlex['value'] = "1"
 radAlex['variable'] = prediction
 radAlex.select()
-radAlex.grid(row=1,column=0)
+radAlex.grid(row=1,column=1)
 
 # - Option Charles
 radCharles = tk.Radiobutton(cadreChoix)
@@ -273,7 +387,7 @@ radCharles['font'] = ["Calibri", 15, "bold"]
 radCharles['bg'] = "#ffffff"
 radCharles['value'] = "2"
 radCharles['variable'] = prediction
-radCharles.grid(row=2,column=0)
+radCharles.grid(row=2,column=1)
 
 # - Option Égalité
 radEgalite = tk.Radiobutton(cadreChoix)
@@ -282,7 +396,7 @@ radEgalite['font'] = ["Calibri", 15, "bold"]
 radEgalite['bg'] = "#ffffff"
 radEgalite['value'] = "3"
 radEgalite['variable'] = prediction
-radEgalite.grid(row=3,column=0)
+radEgalite.grid(row=3,column=1)
 
 # - Bouton pour lancer les dés
 btnLancer = tk.Button(cadreChoix)
@@ -299,7 +413,7 @@ btnRejouer['font'] = ["Calibri", 15, "bold"]
 btnRejouer['bg'] = "#ffffff"
 btnRejouer['command'] = rejouer
 btnRejouer['state'] = 'disabled'
-btnRejouer.grid(row=5,column=0)
+btnRejouer.grid(row=4,column=2)
 
 # - Titre pour cadreResultat
 lblResultat = tk.Label(cadreResultat)
