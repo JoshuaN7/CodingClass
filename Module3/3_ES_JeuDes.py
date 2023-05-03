@@ -75,7 +75,7 @@ def lancer():
     d_o_1 = random.randint(1, 6)
     d_o_2 = random.randint(1, 6)
     d_o_3 = random.randint(1, 6)
-    
+
     lblAlex1['text'] = d_o_1
     lblAlex2['text'] = d_o_2
     lblAlex3['text'] = d_o_3
@@ -380,7 +380,7 @@ lblChoix['text'] = "Prédisiez le gagnant du jeu"
 lblChoix['font'] = ["Calibri", 20, "bold"]
 lblChoix['bg'] = "#ffffff"
 lblChoix['fg'] = "#000000"
-lblChoix.grid(row=0,column=0, columnspan=3, padx=30)
+lblChoix.grid(row=0,column=0, columnspan=3, padx=50)
 
 prediction = tk.StringVar()
 
