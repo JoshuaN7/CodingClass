@@ -7,11 +7,11 @@
 # - Importaion des modules ------------------------------------------------------------------------------------------
 import tkinter as tk
 import random
+import os
 
 # - Programme principal ------------------------------------------------------------------------------------------
 
 # - Variables globales
-global argent, mpari, rondes, alex, charles, nul
 argent_defaut = 100
 argent = None
 rondes = 0
@@ -75,6 +75,7 @@ def lancer():
     d_o_1 = random.randint(1, 6)
     d_o_2 = random.randint(1, 6)
     d_o_3 = random.randint(1, 6)
+    
     lblAlex1['text'] = d_o_1
     lblAlex2['text'] = d_o_2
     lblAlex3['text'] = d_o_3
@@ -83,6 +84,7 @@ def lancer():
     d_j_1 = random.randint(1, 6)
     d_j_2 = random.randint(1, 6)
     d_j_3 = random.randint(1, 6)
+
     lblCharles1['text'] = d_j_1
     lblCharles2['text'] = d_j_2
     lblCharles3['text'] = d_j_3
@@ -163,7 +165,7 @@ def lancer():
     if argent <= 0:
         # - Afficher que le joueur a perdu tout son argent
         lblArgentRestant['fg'] = "#ff0000"
-        lblArgentRestant['text'] = ("\nVous avez perdu tout votre argent!\nClicquez sur recommencer pour rejouer!")
+        lblArgentRestant['text'] = ("\nVous avez perdu tout votre argent!\nClicquez sur rejouer pour recommencer!")
         # - Activer le bouton pour recommencer
         btnRejouer['state'] = "normal"
 
@@ -197,6 +199,7 @@ def rejouer():
     lblAlex['text'] = "Dés d'Alex: 0"
     lblCharles['text'] = "Dés de Charles: 0"
     lblGagnant['text'] = ""
+    lblGagnant['fg'] = "#000000"
     lblRondes['text'] = "Rondes: {}".format(rondes)
     lblVictoiresAlex['text'] = "Victoires Alex: {}".format(alex)
     lblVictoiresCharles['text'] = "Victoires Charles: {}".format(charles)
@@ -230,6 +233,7 @@ def regles():
     btnRetour = tk.Button(cadreRegles)
     btnRetour['text'] = "Retour"
     btnRetour['font'] = ("Arial", 15)
+    btnRetour['fg'] = "#000000"
     btnRetour['bg'] = "#ffffff"
     btnRetour['command'] = cadreRegles.destroy
     btnRetour.grid(row=2, column=2, columnspan=2, pady=20)
@@ -243,9 +247,14 @@ def changerValeurs():
 
 
         if entArgentDefaut.get().isdigit():
+
+            # - Recommenncer le jeu
+            rejouer()
+
             # - Enregistrer les valeurs
             argent_defaut = int(entArgentDefaut.get())
             argent = argent_defaut
+        
             # - Détruire le cadre
             cadreValeurs.destroy()
             lblArgent['text'] = str(argent) + "$"
@@ -264,6 +273,7 @@ def changerValeurs():
     lblValeurs['text'] = "Changer les valeurs par défaut: "
     lblValeurs['font'] = ("Arial", 20)
     lblValeurs['bg'] = "#ffffff"
+    lblValeurs['fg'] = "#000000"
     lblValeurs.grid(row=0, column=2, columnspan=2, padx=150)
 
     # - Argent Defaut
@@ -271,12 +281,14 @@ def changerValeurs():
     lblArgentDefaut['text'] = "Argent par défaut:"
     lblArgentDefaut['font'] = ("Arial", 15)
     lblArgentDefaut['bg'] = "#ffffff"
+    lblArgentDefaut['fg'] = "#000000"
     lblArgentDefaut.grid(row=1, column=2, pady=50)
 
     # - Entrée pour changer les valeurs
     entArgentDefaut = tk.Entry(cadreValeurs)
     entArgentDefaut['font'] = ("Arial", 15)
     entArgentDefaut['bg'] = "#ffffff"
+    entArgentDefaut['fg'] = "#000000"
     entArgentDefaut.grid(row=1, column=3)
 
     # - Erreur
@@ -292,6 +304,7 @@ def changerValeurs():
     btnEnregistrer['text'] = "Enregistrer"
     btnEnregistrer['font'] = ("Arial", 15)
     btnEnregistrer['bg'] = "#ffffff"
+    btnEnregistrer['fg'] = "#000000"
     btnEnregistrer['command'] = enregistrer
     btnEnregistrer.grid(row=3, column=2, columnspan=2)
 
@@ -366,6 +379,7 @@ lblChoix = tk.Label(cadreChoix)
 lblChoix['text'] = "Prédisiez le gagnant du jeu"
 lblChoix['font'] = ["Calibri", 20, "bold"]
 lblChoix['bg'] = "#ffffff"
+lblChoix['fg'] = "#000000"
 lblChoix.grid(row=0,column=0, columnspan=3, padx=30)
 
 prediction = tk.StringVar()
@@ -375,6 +389,7 @@ radAlex = tk.Radiobutton(cadreChoix)
 radAlex['text'] = "Alex"
 radAlex['font'] = ["Calibri", 15, "bold"]
 radAlex['bg'] = "#ffffff"
+radAlex['fg'] = "#000000"
 radAlex['value'] = "1"
 radAlex['variable'] = prediction
 radAlex.select()
@@ -385,6 +400,7 @@ radCharles = tk.Radiobutton(cadreChoix)
 radCharles['text'] = "Charles"
 radCharles['font'] = ["Calibri", 15, "bold"]
 radCharles['bg'] = "#ffffff"
+radCharles['fg'] = "#000000"
 radCharles['value'] = "2"
 radCharles['variable'] = prediction
 radCharles.grid(row=2,column=1)
@@ -394,6 +410,7 @@ radEgalite = tk.Radiobutton(cadreChoix)
 radEgalite['text'] = "Égalité"
 radEgalite['font'] = ["Calibri", 15, "bold"]
 radEgalite['bg'] = "#ffffff"
+radEgalite['fg'] = "#000000"
 radEgalite['value'] = "3"
 radEgalite['variable'] = prediction
 radEgalite.grid(row=3,column=1)
@@ -403,6 +420,7 @@ btnLancer = tk.Button(cadreChoix)
 btnLancer['text'] = "Lancer"
 btnLancer['font'] = ["Calibri", 15, "bold"]
 btnLancer['bg'] = "#ffffff"
+btnLancer['fg'] = "#000000"
 btnLancer['command'] = jouer
 btnLancer.grid(row=4,column=0, pady=10)
 
@@ -411,6 +429,7 @@ btnRejouer = tk.Button(cadreChoix)
 btnRejouer['text'] = "Rejouer"
 btnRejouer['font'] = ["Calibri", 15, "bold"]
 btnRejouer['bg'] = "#ffffff"
+btnRejouer['fg'] = "#000000"
 btnRejouer['command'] = rejouer
 btnRejouer['state'] = 'disabled'
 btnRejouer.grid(row=4,column=2)
@@ -420,6 +439,7 @@ lblResultat = tk.Label(cadreResultat)
 lblResultat['text'] = "Résultat"
 lblResultat['font'] = ["Calibri", 20, "bold"]
 lblResultat['bg'] = "#ffffff"
+lblResultat['fg'] = "#000000"
 lblResultat.grid(row=0,column=0,columnspan=6, padx=160)
 
 # - Titre pour cadreArgent
@@ -427,6 +447,7 @@ lblArgentt = tk.Label(cadreArgent)
 lblArgentt['text'] = "Argent"
 lblArgentt['font'] = ["Calibri", 20, "bold"]
 lblArgentt['bg'] = "#ffffff"
+lblArgentt['fg'] = "#000000"
 lblArgentt.grid(row=0,column=0,columnspan=2, padx=95)
 
 # - Argent
@@ -434,6 +455,7 @@ lblArgent = tk.Label(cadreArgent)
 lblArgent['text'] = str(argent) + "$"
 lblArgent['font'] = ["Calibri", 15, "bold"]
 lblArgent['bg'] = "#ffffff"
+lblArgent['fg'] = "#000000"
 lblArgent.grid(row=1,column=0,columnspan=2)
 
 # - Argent parié
@@ -441,6 +463,7 @@ lblArgentParie = tk.Label(cadreArgent)
 lblArgentParie['text'] = "Pari"
 lblArgentParie['font'] = ["Calibri", 15, "bold"]
 lblArgentParie['bg'] = "#ffffff"
+lblArgentParie['fg'] = "#000000"
 lblArgentParie.grid(row=2,column=0,columnspan=2)
 
 # - Argent input
@@ -448,6 +471,7 @@ pari = tk.StringVar()
 entArgent = tk.Entry(cadreArgent)
 entArgent['font'] = ["Calibri", 15, "bold"]
 entArgent['bg'] = "#ffffff"
+entArgent['fg'] = "#000000"
 entArgent['textvariable'] = pari
 entArgent.grid(row=3,column=0,columnspan=2, padx=20)
 
@@ -464,18 +488,21 @@ lblAlex1 = tk.Label(cadreResultat)
 lblAlex1['text'] = "0"
 lblAlex1['font'] = ["Calibri", 15, "bold"]
 lblAlex1['bg'] = "#ffffff"
+lblAlex1['fg'] = "#000000"
 lblAlex1.grid(row=1,column=0)
 
 lblAlex2 = tk.Label(cadreResultat)
 lblAlex2['text'] = "0"
 lblAlex2['font'] = ["Calibri", 15, "bold"]
 lblAlex2['bg'] = "#ffffff"
+lblAlex2['fg'] = "#000000"
 lblAlex2.grid(row=1,column=1)
 
 lblAlex3 = tk.Label(cadreResultat)
 lblAlex3['text'] = "0"
 lblAlex3['font'] = ["Calibri", 15, "bold"]
 lblAlex3['bg'] = "#ffffff"
+lblAlex3['fg'] = "#000000"
 lblAlex3.grid(row=1,column=2)
 
 # - Label Alex
@@ -483,6 +510,7 @@ lblAlex = tk.Label(cadreResultat)
 lblAlex['text'] = "Dés d'Alex: 0"
 lblAlex['font'] = ["Calibri", 15, "bold"]
 lblAlex['bg'] = "#ffffff"
+lblAlex['fg'] = "#000000"
 lblAlex.grid(row=2,column=0, columnspan= 3)
 
 
@@ -491,18 +519,21 @@ lblCharles1 = tk.Label(cadreResultat)
 lblCharles1['text'] = "0"
 lblCharles1['font'] = ["Calibri", 15, "bold"]
 lblCharles1['bg'] = "#ffffff"
+lblCharles1['fg'] = "#000000"
 lblCharles1.grid(row=1,column=3)
 
 lblCharles2 = tk.Label(cadreResultat)
 lblCharles2['text'] = "0"
 lblCharles2['font'] = ["Calibri", 15, "bold"]
 lblCharles2['bg'] = "#ffffff"
+lblCharles2['fg'] = "#000000"
 lblCharles2.grid(row=1,column=4)
 
 lblCharles3 = tk.Label(cadreResultat)
 lblCharles3['text'] = "0"
 lblCharles3['font'] = ["Calibri", 15, "bold"]
 lblCharles3['bg'] = "#ffffff"
+lblCharles3['fg'] = "#000000"
 lblCharles3.grid(row=1,column=5)
 
 # - Dés Charles
@@ -510,6 +541,7 @@ lblCharles = tk.Label(cadreResultat)
 lblCharles['text'] = "Dés de Charles: 0"
 lblCharles['font'] = ["Calibri", 15, "bold"]
 lblCharles['bg'] = "#ffffff"
+lblCharles['fg'] = "#000000"
 lblCharles.grid(row=2,column=3, columnspan= 3)
 
 # - Qui a gagné
@@ -517,6 +549,7 @@ lblGagnant = tk.Label(cadreResultat)
 lblGagnant['text'] = ""
 lblGagnant['font'] = ["Calibri", 15]
 lblGagnant['bg'] = "#ffffff"
+lblGagnant['fg'] = "#000000"
 lblGagnant.grid(row=3,column=0, columnspan= 6)
 
 # - Argent restant
@@ -524,6 +557,7 @@ lblArgentRestant = tk.Label(cadreResultat)
 lblArgentRestant['text'] = ""
 lblArgentRestant['font'] = ["Calibri", 15, "bold"]
 lblArgentRestant['bg'] = "#ffffff"
+lblArgentRestant['fg'] = "#000000"
 lblArgentRestant.grid(row=4,column=0, columnspan= 6)
 
 # - Titre pour cadreScore
@@ -531,6 +565,7 @@ lblScore = tk.Label(cadreScore)
 lblScore['text'] = "Score"
 lblScore['font'] = ["Calibri", 20, "bold"]
 lblScore['bg'] = "#ffffff"
+lblScore['fg'] = "#000000"
 lblScore.grid(row=0,column=0, padx=100)
 
 # - Rondes
@@ -538,6 +573,7 @@ lblRondes = tk.Label(cadreScore)
 lblRondes['text'] = "Rondes: {}".format(rondes)
 lblRondes['font'] = ["Calibri", 15]
 lblRondes['bg'] = "#ffffff"
+lblRondes['fg'] = "#000000"
 lblRondes.grid(row=1,column=0)
 
 # - Victoires Alex
@@ -545,6 +581,7 @@ lblVictoiresAlex = tk.Label(cadreScore)
 lblVictoiresAlex['text'] = "Victoires Alex: {}".format(alex)
 lblVictoiresAlex['font'] = ["Calibri", 15]
 lblVictoiresAlex['bg'] = "#ffffff"
+lblVictoiresAlex['fg'] = "#000000"
 lblVictoiresAlex.grid(row=2,column=0)
 
 # - Victoires Charles
@@ -552,6 +589,7 @@ lblVictoiresCharles = tk.Label(cadreScore)
 lblVictoiresCharles['text'] = "Victoires Charles: {}".format(charles)
 lblVictoiresCharles['font'] = ["Calibri", 15]
 lblVictoiresCharles['bg'] = "#ffffff"
+lblVictoiresCharles['fg'] = "#000000"
 lblVictoiresCharles.grid(row=3,column=0)
 
 # - Victoires nulles
@@ -559,6 +597,7 @@ lblVictoiresNulles = tk.Label(cadreScore)
 lblVictoiresNulles['text'] = "Match nul: {}".format(nul)
 lblVictoiresNulles['font'] = ["Calibri", 15]
 lblVictoiresNulles['bg'] = "#ffffff"
+lblVictoiresNulles['fg'] = "#000000"
 lblVictoiresNulles.grid(row=4,column=0)
 
 
