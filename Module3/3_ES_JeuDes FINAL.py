@@ -66,7 +66,7 @@ def jouer(event=None):
 # - Lancer les dés
 def lancer():
     # - Vairables globales
-    global argent, personne, rf, mpari, rondes, alex, charles, nul, gagne, pourcentage
+    global argent, personne, rf, mpari, rondes, alex, charles, nul, gagne, pourcentage, des
 
     # - Afficher le nombre de rondes
     rondes+=1
@@ -77,18 +77,18 @@ def lancer():
     d_o_2 = random.randint(1, 6)
     d_o_3 = random.randint(1, 6)
 
-    lblAlex1['text'] = d_o_1
-    lblAlex2['text'] = d_o_2
-    lblAlex3['text'] = d_o_3
+    lblAlex1['image'] = des[d_o_1 - 1]
+    lblAlex2['image'] = des[d_o_2 - 1]
+    lblAlex3['image'] = des[d_o_3 - 1]
 
     # - Lancer les dés de Charles
     d_j_1 = random.randint(1, 6)
     d_j_2 = random.randint(1, 6)
     d_j_3 = random.randint(1, 6)
 
-    lblCharles1['text'] = d_j_1
-    lblCharles2['text'] = d_j_2
-    lblCharles3['text'] = d_j_3
+    lblCharles1['image'] = des[d_j_1 - 1]
+    lblCharles2['image'] = des[d_j_2 - 1]
+    lblCharles3['image'] = des[d_j_3 - 1]
 
     # - Calculer la somme des dés d'Alex et de Charles
     somme_o = d_o_1 + d_o_2 + d_o_3
@@ -187,7 +187,7 @@ def lancer():
 def rejouer(event=None):
 
     # - Variables globales
-    global argent, personne, rf, mpari, rondes, alex, charles, nul, pourcentage, gagne, rondes
+    global argent, personne, rf, mpari, rondes, alex, charles, nul, pourcentage, gagne, rondes, des
 
     # - Réinitialiser les variables
     argent = 100
@@ -208,12 +208,12 @@ def rejouer(event=None):
     # - Réinitialiser les labels
     lblArgent['text'] = str(argent) + "$"
     lblArgentRestant['text'] = ""
-    lblAlex1['text'] = "0"
-    lblAlex2['text'] = "0"
-    lblAlex3['text'] = "0"
-    lblCharles1['text'] = "0"
-    lblCharles2['text'] = "0"
-    lblCharles3['text'] = "0"
+    lblAlex1['image'] = des[0]
+    lblAlex2['image'] = des[0]
+    lblAlex3['image'] = des[0]
+    lblCharles1['image'] = des[0]
+    lblCharles2['image'] = des[0]
+    lblCharles3['image'] = des[0]
     lblAlex['text'] = "Dés d'Alex: 0"
     lblCharles['text'] = "Dés de Charles: 0"
     lblGagnant['text'] = ""
@@ -239,7 +239,7 @@ def regles():
     lblRegles['font'] = ("Arial", 20)
     lblRegles['fg'] = "#000000"
     lblRegles['bg'] = "#ffffff"
-    lblRegles.grid(row=0, column=2, columnspan=2, pady=50)
+    lblRegles.grid(row=0, column=2, columnspan=2, pady=50, padx=300)
 
     # - Afficher les règles
     lblRegles1 = tk.Label(cadreRegles)
@@ -331,11 +331,11 @@ def changerValeurs():
 # - Fenetre
 fenetre = tk.Tk()
 fenetre.title("Jeu de dés")
-fenetre.geometry("700x500")
+fenetre.geometry("800x500")
 fenetre['bg'] = "#ffffff"
 
 
-# - Images
+# - Images des dés
 des = [tk.PhotoImage(file='de1.gif'),
         tk.PhotoImage(file='de2.gif'),
         tk.PhotoImage(file='de3.gif'),
@@ -413,7 +413,7 @@ lblChoix['text'] = "Prédisiez le gagnant du jeu"
 lblChoix['font'] = ["Calibri", 20, "bold"]
 lblChoix['bg'] = "#ffffff"
 lblChoix['fg'] = "#000000"
-lblChoix.grid(row=0,column=0, columnspan=3, padx=50)
+lblChoix.grid(row=0,column=0, columnspan=3, padx=100)
 
 prediction = tk.StringVar()
 
@@ -473,7 +473,7 @@ lblResultat['text'] = "Résultat"
 lblResultat['font'] = ["Calibri", 20, "bold"]
 lblResultat['bg'] = "#ffffff"
 lblResultat['fg'] = "#000000"
-lblResultat.grid(row=0,column=0,columnspan=6, padx=160)
+lblResultat.grid(row=0,column=0,columnspan=6, padx=210)
 
 # - Titre pour cadreArgent
 lblArgentt = tk.Label(cadreArgent)
@@ -522,21 +522,21 @@ lblAlex1['image'] = des[0]
 lblAlex1['font'] = ["Calibri", 15, "bold"]
 lblAlex1['bg'] = "#ffffff"
 lblAlex1['fg'] = "#000000"
-lblAlex1.grid(row=1,column=0)
+lblAlex1.grid(row=1,column=0, padx=5)
 
 lblAlex2 = tk.Label(cadreResultat)
 lblAlex2['image'] = des[0]
 lblAlex2['font'] = ["Calibri", 15, "bold"]
 lblAlex2['bg'] = "#ffffff"
 lblAlex2['fg'] = "#000000"
-lblAlex2.grid(row=1,column=1)
+lblAlex2.grid(row=1,column=1, padx=5)
 
 lblAlex3 = tk.Label(cadreResultat)
 lblAlex3['image'] = des[0]
 lblAlex3['font'] = ["Calibri", 15, "bold"]
 lblAlex3['bg'] = "#ffffff"
 lblAlex3['fg'] = "#000000"
-lblAlex3.grid(row=1,column=2)
+lblAlex3.grid(row=1,column=2, padx=5)
 
 # - Label Alex
 lblAlex = tk.Label(cadreResultat)
@@ -553,21 +553,21 @@ lblCharles1['image'] = des[0]
 lblCharles1['font'] = ["Calibri", 15, "bold"]
 lblCharles1['bg'] = "#ffffff"
 lblCharles1['fg'] = "#000000"
-lblCharles1.grid(row=1,column=3)
+lblCharles1.grid(row=1,column=3, padx=5)
 
 lblCharles2 = tk.Label(cadreResultat)
 lblCharles2['image'] = des[0]
 lblCharles2['font'] = ["Calibri", 15, "bold"]
 lblCharles2['bg'] = "#ffffff"
 lblCharles2['fg'] = "#000000"
-lblCharles2.grid(row=1,column=4)
+lblCharles2.grid(row=1,column=4, padx=5)
 
 lblCharles3 = tk.Label(cadreResultat)
 lblCharles3['image'] = des[0]
 lblCharles3['font'] = ["Calibri", 15, "bold"]
 lblCharles3['bg'] = "#ffffff"
 lblCharles3['fg'] = "#000000"
-lblCharles3.grid(row=1,column=5)
+lblCharles3.grid(row=1,column=5, padx=5)
 
 # - Dés Charles
 lblCharles = tk.Label(cadreResultat)
