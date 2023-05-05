@@ -174,6 +174,7 @@ def lancer():
     
     # - Si le joueur a de l'argent encore
     else:
+        # - Rien faire si le joueur a encore de l'argent
         pass
 
     # - Changer le texte pour lblArgent 
@@ -467,14 +468,6 @@ btnRejouer['command'] = rejouer
 btnRejouer['state'] = 'disabled'
 btnRejouer.grid(row=4,column=2)
 
-# - Titre pour cadreResultat
-lblResultat = tk.Label(cadreResultat)
-lblResultat['text'] = "Résultat"
-lblResultat['font'] = ["Calibri", 20, "bold"]
-lblResultat['bg'] = "#ffffff"
-lblResultat['fg'] = "#000000"
-lblResultat.grid(row=0,column=0,columnspan=6, padx=210)
-
 # - Titre pour cadreArgent
 lblArgentt = tk.Label(cadreArgent)
 lblArgentt['text'] = "Argent"
@@ -515,6 +508,14 @@ lblArgentError['font'] = ["Calibri", 10, "bold"]
 lblArgentError['fg'] = "#ff0000" 
 lblArgentError['bg'] = "#ffffff"
 lblArgentError.grid(row=4,column=0,columnspan=2)
+
+# - Titre pour cadreResultat
+lblResultat = tk.Label(cadreResultat)
+lblResultat['text'] = "Résultat"
+lblResultat['font'] = ["Calibri", 20, "bold"]
+lblResultat['bg'] = "#ffffff"
+lblResultat['fg'] = "#000000"
+lblResultat.grid(row=0,column=0,columnspan=6, padx=210)
 
 # - Resultats Alex
 lblAlex1 = tk.Label(cadreResultat)
