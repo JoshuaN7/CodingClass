@@ -206,6 +206,9 @@ def cliqueRejouer(event=None):
     # - Effacer les entrées
     entArgent.delete(0, tk.END)
 
+    # - Bloquer le bouton rejouer
+    btnRejouer['state'] = "disabled"
+
     # - Réinitialiser les labels
     lblArgent['text'] = str(argent) + "$"
     lblArgentRestant['text'] = ""
@@ -228,17 +231,19 @@ def cliqueRejouer(event=None):
     lblPourcentage['text'] = "% De rondes gagnées: {:.2f}%".format(pourcentage)
 
     # - Si le cadre des règles existe le tuer
-    if cadreRegles:
+    try: 
         cadreRegles.destroy()
-    else:
+
     # - Si le cadre des règles n'existe pas ne rien faire
+    except: 
         pass
 
     # - Si le cadre des valeurs existe le tuer
-    if cadreValeurs:
+    try:
         cadreValeurs.destroy()
-    else:
+
     # - Si le cadre des valeurs n'existe pas ne rien faire
+    except:
         pass
 
 def cliqueRegles():
@@ -291,16 +296,19 @@ def cliqueChangerValeurs():
         # - Si les valeurs sont des nombres
         if entArgentDefaut.get().isdigit():
 
+            # - Enregistrer les valeurs
+            argent_defaut = int(entArgentDefaut.get())
+
             # - Recommenncer le jeu
             cliqueRejouer()
 
-            # - Enregistrer les valeurs, changer la valeur de argent_defaut et argent
-            argent_defaut = int(entArgentDefaut.get())
+            # - Changer la valeur de argent_defaut et argent
             argent = argent_defaut
         
             # - Détruire le cadre
             cadreValeurs.destroy()
             lblArgent['text'] = str(argent) + "$"
+
         else:
             # - Afficher un message d'erreur
             lblArgentDefautErreur['text'] = "Veuillez entrer un nombre!"
