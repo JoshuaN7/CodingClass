@@ -9,20 +9,27 @@ import random
 
 # - Programme principal ------------------------------------------------------------------------------------------
 
+# - Fonctions
 
+# - Lancer les dés
 def lancer():
     global des
     lancer = input("Combien de fois voulez-vous lancer les dés?: ")
-    des = []
+    des = [] 
     for i in range(int(lancer)):
         de1 = random.randint(1, 6)
         de2 = random.randint(1, 6)
         des.append(de1 + de2)
     calculs()
         
+# - Calculer les probabilités
 def calculs():
     global des
+
+    # - Loop
     for i in des:
+
+        # - Déclaration des variables
         un = 0
         deux = 0
         trois = 0
@@ -36,6 +43,7 @@ def calculs():
         onze = 0
         douze = 0
 
+        # - Ajouter 1 à la variable de fois que le nombre est sorti
         if i == 1:
             un += 1
         elif i == 2:
@@ -60,8 +68,11 @@ def calculs():
             onze += 1
         elif i == 12:
             douze += 1
+        # - Si il y a une erreur
         else:
             print("Erreur")
+
+    # - Afficher les résultats
     print("\n")
     print("{0:^20}{1:^20}{2:^20}".format("Somme des dés", "Nombre de fois", "Probabilité (%)"))
     print("{:.^60}".format("."))
@@ -69,7 +80,5 @@ def calculs():
         print("{0:^20}{1:^20}{2:^20.0f}".format(x, des.count(x), des.count(x) * 100 / len(des)))
 
 
-        
-
-
+# - Appel de la fonction
 lancer()
