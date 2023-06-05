@@ -23,71 +23,65 @@ import math
 #programme principal
 
 # - Variables
-TEST = False
+TEST = True
 rows = 0
 page_courant = 1
 entries_par_page = 8
-noms = []
-prenoms = []
-heurestotal = []
-postes = []
-postesoptions = ['Cuisinier', 'Serveur', 'Plongeur', 'Caissier']
-taux_horaireCuisinier=19.00  #taux salaire médian
-taux_horaireServeur=15.50  #taux salaire médian
-taux_horairePlongeur=28.98  #taux salaire médian
-taux_horaireCaissier=15.98  #taux salaire médian
+employes = []
+postesoptions = {
+   'Cuisinier' : 19.00,
+   'Serveur' : 15.50,
+   'Plongeur' : 28.98,
+   'Caissier' : 15.98
+}
+
 impot_retenu = 0.105  #10,5% de retenu sur le salaire
 
 # - Fonctions
-def calcul_salaire(i):
-   nb_heures = int(heurestotal[i])
-   if postes[i] == "Cuisinier":
-      salaire_brut=taux_horaireCuisinier*nb_heures
-      return salaire_brut-(salaire_brut*0.105)
-   elif postes[i] == "Serveur":
-      salaire_brut=taux_horaireServeur*nb_heures
-      return salaire_brut-(salaire_brut*0.105)
-   elif postes[i] == "Plongeur":
-      salaire_brut=taux_horairePlongeur*nb_heures
-      return salaire_brut-(salaire_brut*0.105)
-   elif postes[i] == "Caissier":
-      salaire_brut=taux_horaireCaissier*nb_heures
-      return salaire_brut-(salaire_brut*0.105)
-   else:
-      erreur("Veuillez choisir un poste")
+def calcul_salaire(heures, taux_horaire):
+   nb_heures = int(heures)
+   salaire = nb_heures * taux_horaire
+   impot = salaire * impot_retenu
+   salaire_net = salaire - impot
+   return salaire_net
    
 
 def ajouter():
-   global rows, noms, prenoms, heures, lblErreur, postes, TEST, pages, page_courant
+   global employes, postesoptions, rows, TEST
+
    try:
       lblErreur.destroy()
    except:
       pass
    if nom.get() and prenom.get() and heures.get():
       try:
-         if float(heures.get()):
-            if poste.get() == "Poste":
-               erreur("Veuillez choisir un poste")
-            else:
-               rows += 1
-               noms.append(nom.get())
-               prenoms.append(prenom.get())
-               heurestotal.append(heures.get())
-               postes.append(poste.get())
-               if TEST == True:
-                  update()
-               else:
-                  entNom.delete(0, tk.END)
-                  entPrenom.delete(0, tk.END)
-                  entHeures.delete(0, tk.END)
-                  update()
+         x = float(heures.get())
+         if poste.get() == "Poste":
+            erreur("Veuillez choisir un poste")
          else:
-            erreur("Le nombre d'heures doit être un nombre")
+            rows += 1
+            employe = {
+               "nom": nom.get(),
+               "prenom": prenom.get(),
+               "poste": poste.get(),
+               "heures": heures.get(),
+               "salaire": calcul_salaire(heures.get(), postesoptions.get(poste.get()))
+            }
+            employes.append(employe)
+            update()
+            if TEST == True:
+               pass
+            else:
+               clear()
       except:
          erreur("Le nombre d'heures doit être un nombre")
    else:
       erreur("Veuillez remplir tous les champs")
 
+def clear():
+   entNom.delete(0, tk.END)
+   entPrenom.delete(0, tk.END)
+   entHeures.delete(0, tk.END)
 
 def prochain():
    global page_courant
@@ -311,9 +305,10 @@ lblOutils.grid(row=0, column=0)
 
 # - Fonctions pour cadre
 def update():
+   global employes, rows
    for i in range(rows):
       lblPersonne = tk.Label(cadreEmployers)
-      lblPersonne['text'] = noms[i]
+      lblPersonne['text'] = employes[i]["nom"]
       lblPersonne['bg'] = '#ffffff'
       lblPersonne['fg'] = '#000000'
       lblPersonne['relief'] = 'groove'
@@ -324,7 +319,7 @@ def update():
 
    for i in range(rows):
       lblPrenom = tk.Label(cadreEmployers)
-      lblPrenom['text'] = prenoms[i]
+      lblPrenom['text'] = employes[i]["prenom"]
       lblPrenom['bg'] = '#ffffff'
       lblPrenom['fg'] = '#000000'
       lblPrenom['relief'] = 'groove'
@@ -335,7 +330,7 @@ def update():
 
    for i in range(rows):
       lblPoste = tk.Label(cadreEmployers)
-      lblPoste['text'] = postes[i]
+      lblPoste['text'] = employes[i]["poste"]
       lblPoste['bg'] = '#ffffff'
       lblPoste['fg'] = '#000000'
       lblPoste['relief'] = 'groove'
@@ -346,7 +341,7 @@ def update():
 
    for i in range(rows):
       lblHeures = tk.Label(cadreEmployers)
-      lblHeures['text'] = heurestotal[i]
+      lblHeures['text'] = employes[i]["heures"]
       lblHeures['bg'] = '#ffffff'
       lblHeures['fg'] = '#000000'
       lblHeures['relief'] = 'groove'
@@ -357,7 +352,7 @@ def update():
 
    for i in range(rows):
       lblSalaire = tk.Label(cadreEmployers)
-      lblSalaire['text'] = "{:.2f} $".format(calcul_salaire(i))
+      lblSalaire['text'] = "{:.2f} $".format(employes[i]["salaire"])
       lblSalaire['bg'] = '#ffffff'
       lblSalaire['fg'] = '#000000'
       lblSalaire['relief'] = 'groove'
