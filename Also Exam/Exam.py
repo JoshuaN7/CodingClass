@@ -95,20 +95,25 @@ def grouper():
       fin = (i+1) * entreesParPage
       groupe = employes[debut:fin]
       groupes.append(groupe)
-   
-   print(groupes)
 
    update()
+
+def updatePage():
+      global page_courant, groupes
+      lblPage['text'] = "Page {} sur {}".format(page_courant, len(groupes))
 
 def prochain():
-   global page_courant
-   page_courant += 1
-   update()
+   global page_courant, groupes
+   nombreGroupes = len(groupes)
+   if page_courant < nombreGroupes:
+      page_courant += 1
+      update()
 
 def precedent():
-   global page_courant
-   page_courant -= 1
-   update()
+   global page_courant, groupes
+   if page_courant > 1:
+      page_courant -= 1
+      update()
 
 def erreur(message):
    global lblErreur
@@ -255,6 +260,14 @@ btnPrecedent['font'] = ('Arial', '12', 'bold')
 btnPrecedent['command'] = precedent
 btnPrecedent.grid(row=5, column=0, sticky='w')
 
+lblPage = tk.Label(fenetre)
+lblPage['text'] = 'Page {} sur {}'.format(1,1)
+lblPage['bg'] = '#ffffff'
+lblPage['fg'] = '#000000'
+lblPage['font'] = ('Arial', '12', 'bold')
+lblPage.grid(row=5, column=1, columnspan=2)
+
+
 # - Cadre Employers
 lblTxtNom = tk.Label(cadreEmployers)
 lblTxtNom['text'] = 'Nom'
@@ -328,6 +341,8 @@ def update():
    for i in cadreEmployers.winfo_children():
       if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
          i.destroy()
+         
+   updatePage()
 
    groupe_courant = groupes[page_courant-1]
    for i, employe in enumerate(groupe_courant):
