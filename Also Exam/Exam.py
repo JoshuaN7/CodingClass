@@ -25,9 +25,10 @@ import math
 # - Variables
 TEST = True
 rows = 0
+entreesParPage = 8
 page_courant = 1
-entries_par_page = 8
 employes = []
+groupes = []
 postesoptions = {
    'Cuisinier' : 19.00,
    'Serveur' : 15.50,
@@ -68,7 +69,7 @@ def ajouter():
                "salaire": calcul_salaire(heures.get(), postesoptions.get(poste.get()))
             }
             employes.append(employe)
-            update()
+            grouper()
             if TEST == True:
                pass
             else:
@@ -83,14 +84,31 @@ def clear():
    entPrenom.delete(0, tk.END)
    entHeures.delete(0, tk.END)
 
+def grouper():
+   global entreesParPage, employes, groupes
+   groupes.clear()
+   nombreEmployes = len(employes)
+   nombreGroupes = nombreEmployes // entreesParPage + (nombreEmployes % entreesParPage > 0)
+
+   for i in range(nombreGroupes):
+      debut = i * entreesParPage
+      fin = (i+1) * entreesParPage
+      groupe = employes[debut:fin]
+      groupes.append(groupe)
+   
+   print(groupes)
+
+   update()
+
 def prochain():
    global page_courant
    page_courant += 1
+   update()
 
 def precedent():
    global page_courant
    page_courant -= 1
-   print("precedent")
+   update()
 
 def erreur(message):
    global lblErreur
@@ -305,10 +323,16 @@ lblOutils.grid(row=0, column=0)
 
 # - Fonctions pour cadre
 def update():
-   global employes, rows
-   for i in range(rows):
+   global employes, rows, groupes, page_courant
+
+   for i in cadreEmployers.winfo_children():
+      if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
+         i.destroy()
+
+   groupe_courant = groupes[page_courant-1]
+   for i, employe in enumerate(groupe_courant):
       lblPersonne = tk.Label(cadreEmployers)
-      lblPersonne['text'] = employes[i]["nom"]
+      lblPersonne['text'] = employe["nom"]
       lblPersonne['bg'] = '#ffffff'
       lblPersonne['fg'] = '#000000'
       lblPersonne['relief'] = 'groove'
@@ -317,9 +341,8 @@ def update():
       lblPersonne['font'] = ('Arial', '12')
       lblPersonne.grid(row=i+1, column=0)
 
-   for i in range(rows):
       lblPrenom = tk.Label(cadreEmployers)
-      lblPrenom['text'] = employes[i]["prenom"]
+      lblPrenom['text'] = employe["prenom"]
       lblPrenom['bg'] = '#ffffff'
       lblPrenom['fg'] = '#000000'
       lblPrenom['relief'] = 'groove'
@@ -328,9 +351,8 @@ def update():
       lblPrenom['font'] = ('Arial', '12')
       lblPrenom.grid(row=i+1, column=1)
 
-   for i in range(rows):
       lblPoste = tk.Label(cadreEmployers)
-      lblPoste['text'] = employes[i]["poste"]
+      lblPoste['text'] = employe["poste"]
       lblPoste['bg'] = '#ffffff'
       lblPoste['fg'] = '#000000'
       lblPoste['relief'] = 'groove'
@@ -339,9 +361,8 @@ def update():
       lblPoste['font'] = ('Arial', '12')
       lblPoste.grid(row=i+1, column=2)
 
-   for i in range(rows):
       lblHeures = tk.Label(cadreEmployers)
-      lblHeures['text'] = employes[i]["heures"]
+      lblHeures['text'] = employe["heures"]
       lblHeures['bg'] = '#ffffff'
       lblHeures['fg'] = '#000000'
       lblHeures['relief'] = 'groove'
@@ -350,9 +371,8 @@ def update():
       lblHeures['font'] = ('Arial', '12')
       lblHeures.grid(row=i+1, column=3)
 
-   for i in range(rows):
       lblSalaire = tk.Label(cadreEmployers)
-      lblSalaire['text'] = "{:.2f} $".format(employes[i]["salaire"])
+      lblSalaire['text'] = "{:.2f} $".format(employe["salaire"])
       lblSalaire['bg'] = '#ffffff'
       lblSalaire['fg'] = '#000000'
       lblSalaire['relief'] = 'groove'
