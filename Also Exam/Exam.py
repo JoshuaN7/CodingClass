@@ -165,6 +165,9 @@ cadreOutils['borderwidth'] = 2
 cadreOutils.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
 cadreOutils.grid_propagate(0)
 
+# - Bind
+fenetre.bind("<Return>", lambda x: ajouter())
+
 # - Cadre EmployersEntry
 cadreEmployersEntry.columnconfigure(0, weight=1)
 cadreEmployersEntry.columnconfigure(1, weight=1)
@@ -395,6 +398,5 @@ def update():
       lblSalaire['height'] = 2
       lblSalaire['font'] = ('Arial', '12')
       lblSalaire.grid(row=i+1, column=4)
-
 
 fenetre.mainloop()
