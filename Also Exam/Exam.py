@@ -138,7 +138,7 @@ def search():
       erreur("Veuillez remplir tous les champs", "Recherche")
 
 def popupRecherche():
-   global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat
+   global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat, lblTxtNom, lblTxtPrenom, lblTxtPoste, lblTxtHeures, lblTxtSalaire
    cadreRecherche = tk.Toplevel()
    cadreRecherche.title("Rechercher")
    cadreRecherche.geometry("932x500")
@@ -509,7 +509,7 @@ def update(x):
             pass
 
       for i, trouve in enumerate(employesTrouves):
-         lblPersonne = tk.Label(cadreRecherche)
+         lblPersonne = tk.Label(cadreResultat)
          lblPersonne['text'] = trouve["nom"]
          lblPersonne['bg'] = '#ffffff'
          lblPersonne['fg'] = '#000000'
@@ -517,9 +517,9 @@ def update(x):
          lblPersonne['width'] = 20
          lblPersonne['height'] = 2
          lblPersonne['font'] = ('Arial', '12')
-         lblPersonne.grid(row=i+4, column=0)
+         lblPersonne.grid(row=i+1, column=0)
 
-         lblPrenom = tk.Label(cadreRecherche)
+         lblPrenom = tk.Label(cadreResultat)
          lblPrenom['text'] = trouve["prenom"]
          lblPrenom['bg'] = '#ffffff'
          lblPrenom['fg'] = '#000000'
@@ -527,9 +527,9 @@ def update(x):
          lblPrenom['width'] = 20
          lblPrenom['height'] = 2
          lblPrenom['font'] = ('Arial', '12')
-         lblPrenom.grid(row=i+4, column=1)
+         lblPrenom.grid(row=i+1, column=1)
 
-         lblPoste = tk.Label(cadreRecherche)
+         lblPoste = tk.Label(cadreResultat)
          lblPoste['text'] = trouve["poste"]
          lblPoste['bg'] = '#ffffff'
          lblPoste['fg'] = '#000000'
@@ -537,9 +537,9 @@ def update(x):
          lblPoste['width'] = 20
          lblPoste['height'] = 2
          lblPoste['font'] = ('Arial', '12')
-         lblPoste.grid(row=i+4, column=2)
+         lblPoste.grid(row=i+1, column=2)
 
-         lblHeures = tk.Label(cadreRecherche)
+         lblHeures = tk.Label(cadreResultat)
          lblHeures['text'] = trouve["heures"]
          lblHeures['bg'] = '#ffffff'
          lblHeures['fg'] = '#000000'
@@ -547,9 +547,9 @@ def update(x):
          lblHeures['width'] = 20
          lblHeures['height'] = 2
          lblHeures['font'] = ('Arial', '12')
-         lblHeures.grid(row=i+4, column=3)
+         lblHeures.grid(row=i+1, column=3)
 
-         lblSalaire = tk.Label(cadreRecherche)
+         lblSalaire = tk.Label(cadreResultat)
          lblSalaire['text'] = "{:.2f} $".format(trouve["salaire"])
          lblSalaire['bg'] = '#ffffff'
          lblSalaire['fg'] = '#000000'
@@ -557,67 +557,66 @@ def update(x):
          lblSalaire['width'] = 20
          lblSalaire['height'] = 2
          lblSalaire['font'] = ('Arial', '12')
-         lblSalaire.grid(row=i+4, column=4)
+         lblSalaire.grid(row=i+1, column=4)
    else:
-      print("Erreur")
-   for i in cadreEmployers.winfo_children():
-      if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
-         i.destroy()
-      else:
-         pass
-         
-   updatePage()
+      for i in cadreEmployers.winfo_children():
+         if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
+            i.destroy()
+         else:
+            pass
+            
+      updatePage()
 
-   groupe_courant = groupes[page_courant-1]
-   for i, employe in enumerate(groupe_courant):
-      lblPersonne = tk.Label(cadreEmployers)
-      lblPersonne['text'] = employe["nom"]
-      lblPersonne['bg'] = '#ffffff'
-      lblPersonne['fg'] = '#000000'
-      lblPersonne['relief'] = 'groove'
-      lblPersonne['width'] = 20
-      lblPersonne['height'] = 2
-      lblPersonne['font'] = ('Arial', '12')
-      lblPersonne.grid(row=i+1, column=0)
+      groupe_courant = groupes[page_courant-1]
+      for i, employe in enumerate(groupe_courant):
+         lblPersonne = tk.Label(cadreEmployers)
+         lblPersonne['text'] = employe["nom"]
+         lblPersonne['bg'] = '#ffffff'
+         lblPersonne['fg'] = '#000000'
+         lblPersonne['relief'] = 'groove'
+         lblPersonne['width'] = 20
+         lblPersonne['height'] = 2
+         lblPersonne['font'] = ('Arial', '12')
+         lblPersonne.grid(row=i+1, column=0)
 
-      lblPrenom = tk.Label(cadreEmployers)
-      lblPrenom['text'] = employe["prenom"]
-      lblPrenom['bg'] = '#ffffff'
-      lblPrenom['fg'] = '#000000'
-      lblPrenom['relief'] = 'groove'
-      lblPrenom['width'] = 20
-      lblPrenom['height'] = 2
-      lblPrenom['font'] = ('Arial', '12')
-      lblPrenom.grid(row=i+1, column=1)
+         lblPrenom = tk.Label(cadreEmployers)
+         lblPrenom['text'] = employe["prenom"]
+         lblPrenom['bg'] = '#ffffff'
+         lblPrenom['fg'] = '#000000'
+         lblPrenom['relief'] = 'groove'
+         lblPrenom['width'] = 20
+         lblPrenom['height'] = 2
+         lblPrenom['font'] = ('Arial', '12')
+         lblPrenom.grid(row=i+1, column=1)
 
-      lblPoste = tk.Label(cadreEmployers)
-      lblPoste['text'] = employe["poste"]
-      lblPoste['bg'] = '#ffffff'
-      lblPoste['fg'] = '#000000'
-      lblPoste['relief'] = 'groove'
-      lblPoste['width'] = 20
-      lblPoste['height'] = 2
-      lblPoste['font'] = ('Arial', '12')
-      lblPoste.grid(row=i+1, column=2)
+         lblPoste = tk.Label(cadreEmployers)
+         lblPoste['text'] = employe["poste"]
+         lblPoste['bg'] = '#ffffff'
+         lblPoste['fg'] = '#000000'
+         lblPoste['relief'] = 'groove'
+         lblPoste['width'] = 20
+         lblPoste['height'] = 2
+         lblPoste['font'] = ('Arial', '12')
+         lblPoste.grid(row=i+1, column=2)
 
-      lblHeures = tk.Label(cadreEmployers)
-      lblHeures['text'] = employe["heures"]
-      lblHeures['bg'] = '#ffffff'
-      lblHeures['fg'] = '#000000'
-      lblHeures['relief'] = 'groove'
-      lblHeures['width'] = 20
-      lblHeures['height'] = 2
-      lblHeures['font'] = ('Arial', '12')
-      lblHeures.grid(row=i+1, column=3)
+         lblHeures = tk.Label(cadreEmployers)
+         lblHeures['text'] = employe["heures"]
+         lblHeures['bg'] = '#ffffff'
+         lblHeures['fg'] = '#000000'
+         lblHeures['relief'] = 'groove'
+         lblHeures['width'] = 20
+         lblHeures['height'] = 2
+         lblHeures['font'] = ('Arial', '12')
+         lblHeures.grid(row=i+1, column=3)
 
-      lblSalaire = tk.Label(cadreEmployers)
-      lblSalaire['text'] = "{:.2f} $".format(employe["salaire"])
-      lblSalaire['bg'] = '#ffffff'
-      lblSalaire['fg'] = '#000000'
-      lblSalaire['relief'] = 'groove'
-      lblSalaire['width'] = 20
-      lblSalaire['height'] = 2
-      lblSalaire['font'] = ('Arial', '12')
-      lblSalaire.grid(row=i+1, column=4)
+         lblSalaire = tk.Label(cadreEmployers)
+         lblSalaire['text'] = "{:.2f} $".format(employe["salaire"])
+         lblSalaire['bg'] = '#ffffff'
+         lblSalaire['fg'] = '#000000'
+         lblSalaire['relief'] = 'groove'
+         lblSalaire['width'] = 20
+         lblSalaire['height'] = 2
+         lblSalaire['font'] = ('Arial', '12')
+         lblSalaire.grid(row=i+1, column=4)
 
 fenetre.mainloop()
