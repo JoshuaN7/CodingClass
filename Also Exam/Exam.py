@@ -35,8 +35,9 @@ postesoptions = {
    'Plongeur' : 28.98,
    'Caissier' : 15.98
 }
-
 impot_retenu = 0.105  #10,5% de retenu sur le salaire
+types = ["Nom", "Prénom", "Poste", "Heures", "Salaire"]
+employesTrouves = []
 
 # - Fonctions
 def calcul_salaire(heures, taux_horaire):
@@ -58,7 +59,7 @@ def ajouter():
       try:
          x = float(heures.get())
          if poste.get() == "Poste":
-            erreur("Veuillez choisir un poste")
+            erreur("Veuillez choisir un poste", "EmployersEntry")
          else:
             rows += 1
             employe = {
@@ -75,9 +76,9 @@ def ajouter():
             else:
                clear()
       except:
-         erreur("Le nombre d'heures doit être un nombre")
+         erreur("Le nombre d'heures doit être un nombre", "EmployersEntry")
    else:
-      erreur("Veuillez remplir tous les champs")
+      erreur("Veuillez remplir tous les champs", "EmployersEntry")
 
 def clear():
    entNom.delete(0, tk.END)
@@ -96,7 +97,7 @@ def grouper():
       groupe = employes[debut:fin]
       groupes.append(groupe)
 
-   update()
+   update("Ajout")
 
 def updatePage():
       global page_courant, groupes
@@ -107,22 +108,168 @@ def prochain():
    nombreGroupes = len(groupes)
    if page_courant < nombreGroupes:
       page_courant += 1
-      update()
+      update("Ajout")
 
 def precedent():
    global page_courant, groupes
    if page_courant > 1:
       page_courant -= 1
-      update()
+      update("Ajout")
 
-def erreur(message):
-   global lblErreur
-   lblErreur = tk.Label(cadreEmployersEntry)
-   lblErreur['text'] = message
+def search():
+   global typeRecherche, motcle, employesTrouves
+   try: 
+      lblErreur.destroy()
+   except:
+      pass
+   employesTrouves.clear()
+   if motcle.get() and typeRecherche.get():
+      recherche = motcle.get()
+      typeSearch = typeRecherche.get()
+      for i in employes:
+         if recherche in i[typeSearch.lower()]:
+            employesTrouves.append(i)
+            print(employesTrouves)
+         else:
+            erreur("Aucun résultat trouvé", "Recherche")
+      if len(employesTrouves) == 0:
+         erreur("Aucun résultat trouvé", "Recherche")
+      else:
+         update("recherche")
+   else:
+      erreur("Veuillez remplir tous les champs", "Recherche")
+
+def popupRecherche():
+   global typeRecherche, motcle, recherche
+   recherche = tk.Toplevel(fenetre)
+   recherche.title("Rechercher")
+   recherche.geometry("932x500")
+   recherche['bg'] = '#ffffff'
+
+   lblRecherche = tk.Label(recherche)
+   lblRecherche['text'] = "Rechercher"
+   lblRecherche['bg'] = '#ffffff'
+   lblRecherche['fg'] = '#000000'
+   lblRecherche['font'] = ('Arial', '12', 'bold')
+   lblRecherche.grid(row=0, column=0)
+
+   lblType = tk.Label(recherche)
+   lblType['text'] = "Type de recherche"
+   lblType['bg'] = '#ffffff'
+   lblType['fg'] = '#000000'
+   lblType['font'] = ('Arial', '12', 'bold')
+   lblType.grid(row=0, column=1)
+
+   lblErreur = tk.Label(recherche)
+   lblErreur['text'] = ""
    lblErreur['bg'] = '#ffffff'
    lblErreur['fg'] = '#ff0000'
    lblErreur['font'] = ('Arial', '12', 'bold')
-   lblErreur.grid(row=3, column=0, columnspan=4, sticky='nsew')
+   lblErreur.grid(row=0, column=3)
+
+   motcle = tk.StringVar()
+   entRecherche = tk.Entry(recherche)
+   entRecherche['bg'] = '#ffffff'
+   entRecherche['fg'] = '#000000'
+   entRecherche['textvariable'] = motcle
+   entRecherche['font'] = ('Arial', '12')
+   entRecherche.grid(row=1, column=0)
+
+   typeRecherche = tk.StringVar()
+   typeRecherche.set("Nom")
+   dropType = tk.OptionMenu(recherche, typeRecherche, *types)
+   dropType['bg'] = '#ffffff'
+   dropType['fg'] = '#000000'
+   dropType['font'] = ('Arial', '12')
+   dropType.grid(row=1, column=1)
+
+   btnRechercher = tk.Button(recherche)
+   btnRechercher['text'] = "Rechercher"
+   btnRechercher['bg'] = '#ffffff'
+   btnRechercher['fg'] = '#000000'
+   btnRechercher['font'] = ('Arial', '12', 'bold')
+   btnRechercher['command'] = search
+   btnRechercher.grid(row=1, column=2)
+
+   lblTxtNom = tk.Label(recherche)
+   lblTxtNom['text'] = 'Nom'
+   lblTxtNom['bg'] = '#969696'
+   lblTxtNom['fg'] = '#000000'
+   lblTxtNom['width'] = 20
+   lblTxtNom['height'] = 2
+   lblTxtNom['borderwidth'] = 2
+   lblTxtNom['relief'] = 'groove'
+   lblTxtNom['font'] = ('Arial', '12')
+   lblTxtNom.grid(row=3, column=0)
+
+   lblTxtPrenom = tk.Label(recherche)
+   lblTxtPrenom['text'] = 'Prénom'
+   lblTxtPrenom['bg'] = '#969696'
+   lblTxtPrenom['fg'] = '#000000'
+   lblTxtPrenom['width'] = 20
+   lblTxtPrenom['height'] = 2
+   lblTxtPrenom['borderwidth'] = 2
+   lblTxtPrenom['relief'] = 'groove'
+   lblTxtPrenom['font'] = ('Arial', '12')
+   lblTxtPrenom.grid(row=3, column=1)
+
+   lblTxtPoste = tk.Label(recherche)
+   lblTxtPoste['text'] = 'Poste'
+   lblTxtPoste['bg'] = '#969696'
+   lblTxtPoste['fg'] = '#000000'
+   lblTxtPoste['width'] = 20
+   lblTxtPoste['height'] = 2
+   lblTxtPoste['borderwidth'] = 2
+   lblTxtPoste['relief'] = 'groove'
+   lblTxtPoste['font'] = ('Arial', '12')
+   lblTxtPoste.grid(row=3, column=2)
+
+   lblTxtHeures = tk.Label(recherche)
+   lblTxtHeures['text'] = 'Heures'
+   lblTxtHeures['bg'] = '#969696'
+   lblTxtHeures['fg'] = '#000000'
+   lblTxtHeures['width'] = 20
+   lblTxtHeures['height'] = 2
+   lblTxtHeures['borderwidth'] = 2
+   lblTxtHeures['relief'] = 'groove'
+   lblTxtHeures['font'] = ('Arial', '12')
+   lblTxtHeures.grid(row=3, column=3)
+
+   lblTxtSalaire = tk.Label(recherche)
+   lblTxtSalaire['text'] = 'Salaire'
+   lblTxtSalaire['bg'] = '#969696'
+   lblTxtSalaire['fg'] = '#000000'
+   lblTxtSalaire['width'] = 20
+   lblTxtSalaire['height'] = 2
+   lblTxtSalaire['borderwidth'] = 2
+   lblTxtSalaire['relief'] = 'groove'
+   lblTxtSalaire['font'] = ('Arial', '12')
+   lblTxtSalaire.grid(row=3, column=4)
+
+
+
+
+
+
+def erreur(message, endroit):
+   global lblErreur
+
+   if endroit == "EmployersEntry":
+      lblErreur = tk.Label(cadreEmployersEntry)
+      lblErreur['text'] = message
+      lblErreur['bg'] = '#ffffff'
+      lblErreur['fg'] = '#ff0000'
+      lblErreur['font'] = ('Arial', '12', 'bold')
+      lblErreur.grid(row=3, column=0, columnspan=4, sticky='nsew')
+   if endroit == "Recherche":
+      lblErreur = tk.Label(recherche)
+      lblErreur['text'] = message
+      lblErreur['bg'] = '#ffffff'
+      lblErreur['fg'] = '#ff0000'
+      lblErreur['font'] = ('Arial', '12', 'bold')
+      lblErreur.grid(row=2, column=0, columnspan=3, sticky='nsew')
+   else:
+      pass
 
 # - Fenetre
 fenetre = tk.Tk()
@@ -143,6 +290,7 @@ fenetre.rowconfigure(4, weight=1)
 # - images
 imgFlecheGauche = tk.PhotoImage(file="flechegauche.gif")
 imgFlecheDroite = tk.PhotoImage(file="flechedroite.gif")
+imgLoupe = tk.PhotoImage(file="loupe.gif")
 
 # - Cadres
 cadreEmployers = tk.Frame(fenetre)
@@ -248,6 +396,7 @@ btnAjouter.grid(row=2, column=0, columnspan=4)
 # - Porchain page
 btnProchain = tk.Button(fenetre)
 btnProchain['image'] = imgFlecheDroite
+btnProchain['relief'] = 'flat'
 btnProchain['bg'] = '#ffffff'
 btnProchain['fg'] = '#000000'
 btnProchain['font'] = ('Arial', '12', 'bold')
@@ -257,6 +406,7 @@ btnProchain.grid(row=5, column=3, sticky='e')
 # - Page précédente
 btnPrecedent = tk.Button(fenetre)
 btnPrecedent['image'] = imgFlecheGauche
+btnPrecedent['relief'] = 'flat'
 btnPrecedent['bg'] = '#ffffff'
 btnPrecedent['fg'] = '#000000'
 btnPrecedent['font'] = ('Arial', '12', 'bold')
@@ -336,14 +486,87 @@ lblOutils['fg'] = '#000000'
 lblOutils['font'] = ('Arial', '20', 'bold')
 lblOutils.grid(row=0, column=0)
 
+btnRechercher = tk.Button(cadreOutils)
+btnRechercher['image'] = imgLoupe
+btnRechercher['relief'] = 'flat'
+btnRechercher['bg'] = '#ffffff'
+btnRechercher['fg'] = '#000000'
+btnRechercher['font'] = ('Arial', '12', 'bold')
+btnRechercher['command'] = popupRecherche
+btnRechercher.grid(row=1, column=0)
+
+
 
 # - Fonctions pour cadre
-def update():
-   global employes, rows, groupes, page_courant
+def update(x):
+   global employes, rows, groupes, page_courant, employesTrouves
 
+   if x == "recherche": 
+      for i in cadreEmployers.winfo_children():
+         if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
+            i.destroy()
+         else:
+            pass
+         
+      updatePage()
+
+      for i in range(3):
+         lblPersonne = tk.Label(recherche)
+         lblPersonne['text'] = employesTrouves["nom"]
+         lblPersonne['bg'] = '#ffffff'
+         lblPersonne['fg'] = '#000000'
+         lblPersonne['relief'] = 'groove'
+         lblPersonne['width'] = 20
+         lblPersonne['height'] = 2
+         lblPersonne['font'] = ('Arial', '12')
+         lblPersonne.grid(row=i+4, column=0)
+
+         lblPrenom = tk.Label(recherche)
+         lblPrenom['text'] = employesTrouves["prenom"]
+         lblPrenom['bg'] = '#ffffff'
+         lblPrenom['fg'] = '#000000'
+         lblPrenom['relief'] = 'groove'
+         lblPrenom['width'] = 20
+         lblPrenom['height'] = 2
+         lblPrenom['font'] = ('Arial', '12')
+         lblPrenom.grid(row=i+4, column=1)
+
+         lblPoste = tk.Label(recherche)
+         lblPoste['text'] = employesTrouves["poste"]
+         lblPoste['bg'] = '#ffffff'
+         lblPoste['fg'] = '#000000'
+         lblPoste['relief'] = 'groove'
+         lblPoste['width'] = 20
+         lblPoste['height'] = 2
+         lblPoste['font'] = ('Arial', '12')
+         lblPoste.grid(row=i+4, column=2)
+
+         lblHeures = tk.Label(recherche)
+         lblHeures['text'] = employesTrouves["heures"]
+         lblHeures['bg'] = '#ffffff'
+         lblHeures['fg'] = '#000000'
+         lblHeures['relief'] = 'groove'
+         lblHeures['width'] = 20
+         lblHeures['height'] = 2
+         lblHeures['font'] = ('Arial', '12')
+         lblHeures.grid(row=i+4, column=3)
+
+         lblSalaire = tk.Label(recherche)
+         lblSalaire['text'] = "{:.2f} $".format(employesTrouves["salaire"])
+         lblSalaire['bg'] = '#ffffff'
+         lblSalaire['fg'] = '#000000'
+         lblSalaire['relief'] = 'groove'
+         lblSalaire['width'] = 20
+         lblSalaire['height'] = 2
+         lblSalaire['font'] = ('Arial', '12')
+         lblSalaire.grid(row=i+4, column=4)
+   else:
+      print("Erreur")
    for i in cadreEmployers.winfo_children():
       if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
          i.destroy()
+      else:
+         pass
          
    updatePage()
 
