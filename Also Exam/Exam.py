@@ -18,7 +18,6 @@ Faire des ajouts pour rendre l'expérience usager intéressante.
 
 #importation des modules
 import tkinter as tk
-import math
 
 #programme principal
 
@@ -36,7 +35,7 @@ postesoptions = {
    'Caissier' : 15.98
 }
 impot_retenu = 0.105  #10,5% de retenu sur le salaire
-types = ["Nom", "Prénom", "Poste", "Heures", "Salaire"]
+types = ["Nom", "Prenom", "Poste", "Heures", "Salaire"]
 employesTrouves = []
 
 # - Fonctions
@@ -117,7 +116,7 @@ def precedent():
       update("Ajout")
 
 def search():
-   global typeRecherche, motcle, employesTrouves
+   global typeRecherche, motcle, employesTrouves, lblErreur
    try: 
       lblErreur.destroy()
    except:
@@ -129,7 +128,6 @@ def search():
       for i in employes:
          if recherche in i[typeSearch.lower()]:
             employesTrouves.append(i)
-            print(employesTrouves)
          else:
             erreur("Aucun résultat trouvé", "Recherche")
       if len(employesTrouves) == 0:
@@ -140,27 +138,33 @@ def search():
       erreur("Veuillez remplir tous les champs", "Recherche")
 
 def popupRecherche():
-   global typeRecherche, motcle, recherche
-   recherche = tk.Toplevel(fenetre)
-   recherche.title("Rechercher")
-   recherche.geometry("932x500")
-   recherche['bg'] = '#ffffff'
+   global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat
+   cadreRecherche = tk.Toplevel()
+   cadreRecherche.title("Rechercher")
+   cadreRecherche.geometry("932x500")
+   cadreRecherche['bg'] = '#ffffff'
 
-   lblRecherche = tk.Label(recherche)
+   cadreResultat = tk.Frame(cadreRecherche)
+   cadreResultat['bg'] = '#ffffff'
+   cadreResultat['relief'] = "groove"
+   cadreResultat['borderwidth'] = 2
+   cadreResultat.grid(row = 3, column=0, columnspan=4, sticky='nsew')
+
+   lblRecherche = tk.Label(cadreRecherche)
    lblRecherche['text'] = "Rechercher"
    lblRecherche['bg'] = '#ffffff'
    lblRecherche['fg'] = '#000000'
    lblRecherche['font'] = ('Arial', '12', 'bold')
    lblRecherche.grid(row=0, column=0)
 
-   lblType = tk.Label(recherche)
+   lblType = tk.Label(cadreRecherche)
    lblType['text'] = "Type de recherche"
    lblType['bg'] = '#ffffff'
    lblType['fg'] = '#000000'
    lblType['font'] = ('Arial', '12', 'bold')
    lblType.grid(row=0, column=1)
 
-   lblErreur = tk.Label(recherche)
+   lblErreur = tk.Label(cadreRecherche)
    lblErreur['text'] = ""
    lblErreur['bg'] = '#ffffff'
    lblErreur['fg'] = '#ff0000'
@@ -168,7 +172,7 @@ def popupRecherche():
    lblErreur.grid(row=0, column=3)
 
    motcle = tk.StringVar()
-   entRecherche = tk.Entry(recherche)
+   entRecherche = tk.Entry(cadreRecherche)
    entRecherche['bg'] = '#ffffff'
    entRecherche['fg'] = '#000000'
    entRecherche['textvariable'] = motcle
@@ -177,13 +181,13 @@ def popupRecherche():
 
    typeRecherche = tk.StringVar()
    typeRecherche.set("Nom")
-   dropType = tk.OptionMenu(recherche, typeRecherche, *types)
+   dropType = tk.OptionMenu(cadreRecherche, typeRecherche, *types)
    dropType['bg'] = '#ffffff'
    dropType['fg'] = '#000000'
    dropType['font'] = ('Arial', '12')
    dropType.grid(row=1, column=1)
 
-   btnRechercher = tk.Button(recherche)
+   btnRechercher = tk.Button(cadreRecherche)
    btnRechercher['text'] = "Rechercher"
    btnRechercher['bg'] = '#ffffff'
    btnRechercher['fg'] = '#000000'
@@ -191,7 +195,7 @@ def popupRecherche():
    btnRechercher['command'] = search
    btnRechercher.grid(row=1, column=2)
 
-   lblTxtNom = tk.Label(recherche)
+   lblTxtNom = tk.Label(cadreResultat)
    lblTxtNom['text'] = 'Nom'
    lblTxtNom['bg'] = '#969696'
    lblTxtNom['fg'] = '#000000'
@@ -200,9 +204,9 @@ def popupRecherche():
    lblTxtNom['borderwidth'] = 2
    lblTxtNom['relief'] = 'groove'
    lblTxtNom['font'] = ('Arial', '12')
-   lblTxtNom.grid(row=3, column=0)
+   lblTxtNom.grid(row=0, column=0)
 
-   lblTxtPrenom = tk.Label(recherche)
+   lblTxtPrenom = tk.Label(cadreResultat)
    lblTxtPrenom['text'] = 'Prénom'
    lblTxtPrenom['bg'] = '#969696'
    lblTxtPrenom['fg'] = '#000000'
@@ -211,9 +215,9 @@ def popupRecherche():
    lblTxtPrenom['borderwidth'] = 2
    lblTxtPrenom['relief'] = 'groove'
    lblTxtPrenom['font'] = ('Arial', '12')
-   lblTxtPrenom.grid(row=3, column=1)
+   lblTxtPrenom.grid(row=0, column=1)
 
-   lblTxtPoste = tk.Label(recherche)
+   lblTxtPoste = tk.Label(cadreResultat)
    lblTxtPoste['text'] = 'Poste'
    lblTxtPoste['bg'] = '#969696'
    lblTxtPoste['fg'] = '#000000'
@@ -222,9 +226,9 @@ def popupRecherche():
    lblTxtPoste['borderwidth'] = 2
    lblTxtPoste['relief'] = 'groove'
    lblTxtPoste['font'] = ('Arial', '12')
-   lblTxtPoste.grid(row=3, column=2)
+   lblTxtPoste.grid(row=0, column=2)
 
-   lblTxtHeures = tk.Label(recherche)
+   lblTxtHeures = tk.Label(cadreResultat)
    lblTxtHeures['text'] = 'Heures'
    lblTxtHeures['bg'] = '#969696'
    lblTxtHeures['fg'] = '#000000'
@@ -233,9 +237,9 @@ def popupRecherche():
    lblTxtHeures['borderwidth'] = 2
    lblTxtHeures['relief'] = 'groove'
    lblTxtHeures['font'] = ('Arial', '12')
-   lblTxtHeures.grid(row=3, column=3)
+   lblTxtHeures.grid(row=0, column=3)
 
-   lblTxtSalaire = tk.Label(recherche)
+   lblTxtSalaire = tk.Label(cadreResultat)
    lblTxtSalaire['text'] = 'Salaire'
    lblTxtSalaire['bg'] = '#969696'
    lblTxtSalaire['fg'] = '#000000'
@@ -244,11 +248,7 @@ def popupRecherche():
    lblTxtSalaire['borderwidth'] = 2
    lblTxtSalaire['relief'] = 'groove'
    lblTxtSalaire['font'] = ('Arial', '12')
-   lblTxtSalaire.grid(row=3, column=4)
-
-
-
-
+   lblTxtSalaire.grid(row=0, column=4)
 
 
 def erreur(message, endroit):
@@ -262,7 +262,7 @@ def erreur(message, endroit):
       lblErreur['font'] = ('Arial', '12', 'bold')
       lblErreur.grid(row=3, column=0, columnspan=4, sticky='nsew')
    if endroit == "Recherche":
-      lblErreur = tk.Label(recherche)
+      lblErreur = tk.Label(cadreRecherche)
       lblErreur['text'] = message
       lblErreur['bg'] = '#ffffff'
       lblErreur['fg'] = '#ff0000'
@@ -499,20 +499,18 @@ btnRechercher.grid(row=1, column=0)
 
 # - Fonctions pour cadre
 def update(x):
-   global employes, rows, groupes, page_courant, employesTrouves
+   global employes, rows, groupes, page_courant, employesTrouves, cadreRecherche, cadreResultat
 
    if x == "recherche": 
-      for i in cadreEmployers.winfo_children():
-         if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
+      for i in cadreResultat.winfo_children():
+         if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire: 
             i.destroy()
          else:
             pass
-         
-      updatePage()
 
-      for i in range(3):
-         lblPersonne = tk.Label(recherche)
-         lblPersonne['text'] = employesTrouves["nom"]
+      for i, trouve in enumerate(employesTrouves):
+         lblPersonne = tk.Label(cadreRecherche)
+         lblPersonne['text'] = trouve["nom"]
          lblPersonne['bg'] = '#ffffff'
          lblPersonne['fg'] = '#000000'
          lblPersonne['relief'] = 'groove'
@@ -521,8 +519,8 @@ def update(x):
          lblPersonne['font'] = ('Arial', '12')
          lblPersonne.grid(row=i+4, column=0)
 
-         lblPrenom = tk.Label(recherche)
-         lblPrenom['text'] = employesTrouves["prenom"]
+         lblPrenom = tk.Label(cadreRecherche)
+         lblPrenom['text'] = trouve["prenom"]
          lblPrenom['bg'] = '#ffffff'
          lblPrenom['fg'] = '#000000'
          lblPrenom['relief'] = 'groove'
@@ -531,8 +529,8 @@ def update(x):
          lblPrenom['font'] = ('Arial', '12')
          lblPrenom.grid(row=i+4, column=1)
 
-         lblPoste = tk.Label(recherche)
-         lblPoste['text'] = employesTrouves["poste"]
+         lblPoste = tk.Label(cadreRecherche)
+         lblPoste['text'] = trouve["poste"]
          lblPoste['bg'] = '#ffffff'
          lblPoste['fg'] = '#000000'
          lblPoste['relief'] = 'groove'
@@ -541,8 +539,8 @@ def update(x):
          lblPoste['font'] = ('Arial', '12')
          lblPoste.grid(row=i+4, column=2)
 
-         lblHeures = tk.Label(recherche)
-         lblHeures['text'] = employesTrouves["heures"]
+         lblHeures = tk.Label(cadreRecherche)
+         lblHeures['text'] = trouve["heures"]
          lblHeures['bg'] = '#ffffff'
          lblHeures['fg'] = '#000000'
          lblHeures['relief'] = 'groove'
@@ -551,8 +549,8 @@ def update(x):
          lblHeures['font'] = ('Arial', '12')
          lblHeures.grid(row=i+4, column=3)
 
-         lblSalaire = tk.Label(recherche)
-         lblSalaire['text'] = "{:.2f} $".format(employesTrouves["salaire"])
+         lblSalaire = tk.Label(cadreRecherche)
+         lblSalaire['text'] = "{:.2f} $".format(trouve["salaire"])
          lblSalaire['bg'] = '#ffffff'
          lblSalaire['fg'] = '#000000'
          lblSalaire['relief'] = 'groove'
