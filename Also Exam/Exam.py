@@ -54,7 +54,7 @@ def ajouter():
       lblErreur.destroy()
    except:
       pass
-   if nom.get() and prenom.get() and heures.get():
+   if nom.get() and prenom.get() and heures.get() and nom.get().isspace() == False and prenom.get().isspace() == False and heures.get().isspace() == False:
       try:
          x = float(heures.get())
          if poste.get() == "Poste":
@@ -116,26 +116,31 @@ def precedent():
       update("Ajout")
 
 def search():
-   global typeRecherche, motcle, employesTrouves, lblErreur
-   try: 
-      lblErreur.destroy()
-   except:
-      pass
-   employesTrouves.clear()
-   if motcle.get() and typeRecherche.get():
-      recherche = motcle.get()
-      typeSearch = typeRecherche.get()
-      for i in employes:
-         if recherche in i[typeSearch.lower()]:
-            employesTrouves.append(i)
-         else:
+    global typeRecherche, motcle, employesTrouves, lblErreur
+    try: 
+        lblErreur.destroy()
+    except:
+        pass
+    employesTrouves.clear()
+    if motcle.get() and typeRecherche.get():
+        recherche = motcle.get()
+        typeSearch = typeRecherche.get()
+        if isinstance(recherche, float):
+            for i in employes:
+                if isinstance(i[typeSearch.lower()], float) and recherche == i[typeSearch.lower()]:
+                    employesTrouves.append(i)
+        else:
+            for i in employes:
+                if recherche.lower() in str(i[typeSearch.lower()]).lower():
+                    employesTrouves.append(i)
+        
+        if len(employesTrouves) == 0:
             erreur("Aucun résultat trouvé", "Recherche")
-      if len(employesTrouves) == 0:
-         erreur("Aucun résultat trouvé", "Recherche")
-      else:
-         update("recherche")
-   else:
-      erreur("Veuillez remplir tous les champs", "Recherche")
+        else:
+            update("recherche")
+    else:
+        erreur("Veuillez remplir tous les champs", "Recherche")
+
 
 def popupRecherche():
    global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat, lblTxtNom, lblTxtPrenom, lblTxtPoste, lblTxtHeures, lblTxtSalaire
@@ -155,7 +160,7 @@ def popupRecherche():
    lblRecherche['bg'] = '#ffffff'
    lblRecherche['fg'] = '#000000'
    lblRecherche['font'] = ('Arial', '12', 'bold')
-   lblRecherche.grid(row=0, column=0)
+   lblRecherche.grid(row=0, column=0, pady=5)
 
    lblType = tk.Label(cadreRecherche)
    lblType['text'] = "Type de recherche"
@@ -193,7 +198,7 @@ def popupRecherche():
    btnRechercher['fg'] = '#000000'
    btnRechercher['font'] = ('Arial', '12', 'bold')
    btnRechercher['command'] = search
-   btnRechercher.grid(row=1, column=2)
+   btnRechercher.grid(row=1, column=2, pady=20)
 
    lblTxtNom = tk.Label(cadreResultat)
    lblTxtNom['text'] = 'Nom'
@@ -483,8 +488,8 @@ lblOutils = tk.Label(cadreOutils)
 lblOutils['text'] = 'Outils'
 lblOutils['bg'] = '#ffffff'
 lblOutils['fg'] = '#000000'
-lblOutils['font'] = ('Arial', '20', 'bold')
-lblOutils.grid(row=0, column=0)
+lblOutils['font'] = ('Arial', '15', 'bold')
+lblOutils.grid(row=0, column=0, padx=10, pady=10)
 
 btnRechercher = tk.Button(cadreOutils)
 btnRechercher['image'] = imgLoupe
