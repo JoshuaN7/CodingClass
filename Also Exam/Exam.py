@@ -24,7 +24,7 @@ import tkinter as tk
 # - Variables
 TEST = True
 rows = 0
-entreesParPage = 8
+entreesParPage = 11
 page_courant = 1
 employes = []
 groupes = []
@@ -46,20 +46,26 @@ def calcul_salaire(heures, taux_horaire):
    salaire_net = salaire - impot
    return salaire_net
    
-
+# - Ajouter des entrées
 def ajouter():
+   # - Variables globales
    global employes, postesoptions, rows, TEST
 
+   # - Supprimer le label d'erreur s'il existe
    try:
       lblErreur.destroy()
    except:
       pass
+   # - Si tous les entrées sont remplis et ne sont pas des espaces ajouter l'entrée dans la liste
    if nom.get() and prenom.get() and heures.get() and nom.get().isspace() == False and prenom.get().isspace() == False and heures.get().isspace() == False:
       try:
+         # - vérifier si le nombre d'heures est un nombre
          x = float(heures.get())
+         # - vérifier si le poste est choisi
          if poste.get() == "Poste":
             erreur("Veuillez choisir un poste", "EmployersEntry")
          else:
+            # - Ajouter à rows
             rows += 1
             employe = {
                "nom": nom.get(),
@@ -68,34 +74,45 @@ def ajouter():
                "heures": heures.get(),
                "salaire": calcul_salaire(heures.get(), postesoptions.get(poste.get()))
             }
+            # - Ajouter à la liste des employés
             employes.append(employe)
+            # - Séparer les employés en groupes selon le nombre d'entrées par page
             grouper()
+            # - Si TEST est True, ne pas effacer les entrées pour faciliter les entrées lors du testing
             if TEST == True:
                pass
             else:
+            # - Si TEST est False, effacer les entrées
                clear()
+      # - Afficher les erreurs
       except:
          erreur("Le nombre d'heures doit être un nombre", "EmployersEntry")
    else:
       erreur("Veuillez remplir tous les champs", "EmployersEntry")
 
+# - Effacer les entrées
 def clear():
    entNom.delete(0, tk.END)
    entPrenom.delete(0, tk.END)
    entHeures.delete(0, tk.END)
 
+# - Séparer les employés en groupes selon le nombre d'entrées par page
 def grouper():
+   # - Variables globales
    global entreesParPage, employes, groupes
+   # - Effacer la liste des groupes pour faire la mise a jour du tableau de groupes
    groupes.clear()
    nombreEmployes = len(employes)
    nombreGroupes = nombreEmployes // entreesParPage + (nombreEmployes % entreesParPage > 0)
 
+   # - Séparer les employés en groupes selon le nombre d'entrées par page
    for i in range(nombreGroupes):
       debut = i * entreesParPage
       fin = (i+1) * entreesParPage
       groupe = employes[debut:fin]
       groupes.append(groupe)
 
+   # - Mettre à jour le tableau de groupes
    update("Ajout")
 
 def updatePage():
@@ -279,7 +296,7 @@ def erreur(message, endroit):
 # - Fenetre
 fenetre = tk.Tk()
 fenetre.title("Comptabilité")
-fenetre.geometry("932x800")
+fenetre.geometry("932x770")
 fenetre['bg'] = '#ffffff'
 
 fenetre.columnconfigure(0, weight=1)
@@ -302,21 +319,14 @@ cadreEmployers = tk.Frame(fenetre)
 cadreEmployers['bg'] = '#ffffff'
 cadreEmployers['relief'] = 'groove'
 cadreEmployers['borderwidth'] = 2
-cadreEmployers.grid(row=2, column=0, rowspan=3, columnspan=4, sticky='nsew')
+cadreEmployers.grid(row=1, column=0, rowspan=4, columnspan=4, sticky='nsew')
 cadreEmployers.grid_propagate(0)
 
 cadreEmployersEntry = tk.Frame(fenetre)
 cadreEmployersEntry['bg'] = '#ffffff'
 cadreEmployersEntry['relief'] = 'groove'
 cadreEmployersEntry['borderwidth'] = 2
-cadreEmployersEntry.grid(row=1, column=0, rowspan=1, columnspan=4, sticky='nsew')
-
-cadreOutils = tk.Frame(fenetre)
-cadreOutils['bg'] = '#ffffff'
-cadreOutils['relief'] = 'groove'
-cadreOutils['borderwidth'] = 2
-cadreOutils.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
-cadreOutils.grid_propagate(0)
+cadreEmployersEntry.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
 
 # - Bind
 fenetre.bind("<Return>", lambda x: ajouter())
@@ -396,7 +406,7 @@ btnAjouter['bg'] = '#ffffff'
 btnAjouter['fg'] = '#000000'
 btnAjouter['font'] = ('Arial', '12', 'bold')
 btnAjouter['command'] = ajouter
-btnAjouter.grid(row=2, column=0, columnspan=4)
+btnAjouter.grid(row=2, column=1)
 
 # - Porchain page
 btnProchain = tk.Button(fenetre)
@@ -427,78 +437,69 @@ lblPage.grid(row=5, column=1, columnspan=2)
 
 
 # - Cadre Employers
-lblTxtNom = tk.Label(cadreEmployers)
-lblTxtNom['text'] = 'Nom'
-lblTxtNom['bg'] = '#969696'
-lblTxtNom['fg'] = '#000000'
-lblTxtNom['width'] = 20
-lblTxtNom['height'] = 2
-lblTxtNom['borderwidth'] = 2
-lblTxtNom['relief'] = 'groove'
-lblTxtNom['font'] = ('Arial', '12')
-lblTxtNom.grid(row=0, column=0)
+lblTxttNom = tk.Label(cadreEmployers)
+lblTxttNom['text'] = 'Nom'
+lblTxttNom['bg'] = '#969696'
+lblTxttNom['fg'] = '#000000'
+lblTxttNom['width'] = 20
+lblTxttNom['height'] = 2
+lblTxttNom['borderwidth'] = 2
+lblTxttNom['relief'] = 'groove'
+lblTxttNom['font'] = ('Arial', '12')
+lblTxttNom.grid(row=0, column=0)
 
-lblTxtPrenom = tk.Label(cadreEmployers)
-lblTxtPrenom['text'] = 'Prénom'
-lblTxtPrenom['bg'] = '#969696'
-lblTxtPrenom['fg'] = '#000000'
-lblTxtPrenom['width'] = 20
-lblTxtPrenom['height'] = 2
-lblTxtPrenom['borderwidth'] = 2
-lblTxtPrenom['relief'] = 'groove'
-lblTxtPrenom['font'] = ('Arial', '12')
-lblTxtPrenom.grid(row=0, column=1)
+lblTxttPrenom = tk.Label(cadreEmployers)
+lblTxttPrenom['text'] = 'Prénom'
+lblTxttPrenom['bg'] = '#969696'
+lblTxttPrenom['fg'] = '#000000'
+lblTxttPrenom['width'] = 20
+lblTxttPrenom['height'] = 2
+lblTxttPrenom['borderwidth'] = 2
+lblTxttPrenom['relief'] = 'groove'
+lblTxttPrenom['font'] = ('Arial', '12')
+lblTxttPrenom.grid(row=0, column=1)
 
-lblTxtPoste = tk.Label(cadreEmployers)
-lblTxtPoste['text'] = 'Poste'
-lblTxtPoste['bg'] = '#969696'
-lblTxtPoste['fg'] = '#000000'
-lblTxtPoste['width'] = 20
-lblTxtPoste['height'] = 2
-lblTxtPoste['borderwidth'] = 2
-lblTxtPoste['relief'] = 'groove'
-lblTxtPoste['font'] = ('Arial', '12')
-lblTxtPoste.grid(row=0, column=2)
+lblTxttPoste = tk.Label(cadreEmployers)
+lblTxttPoste['text'] = 'Poste'
+lblTxttPoste['bg'] = '#969696'
+lblTxttPoste['fg'] = '#000000'
+lblTxttPoste['width'] = 20
+lblTxttPoste['height'] = 2
+lblTxttPoste['borderwidth'] = 2
+lblTxttPoste['relief'] = 'groove'
+lblTxttPoste['font'] = ('Arial', '12')
+lblTxttPoste.grid(row=0, column=2)
 
-lblTxtHeures = tk.Label(cadreEmployers)
-lblTxtHeures['text'] = 'Heures'
-lblTxtHeures['bg'] = '#969696'
-lblTxtHeures['fg'] = '#000000'
-lblTxtHeures['width'] = 20
-lblTxtHeures['height'] = 2
-lblTxtHeures['borderwidth'] = 2
-lblTxtHeures['relief'] = 'groove'
-lblTxtHeures['font'] = ('Arial', '12')
-lblTxtHeures.grid(row=0, column=3)
+lblTxttHeures = tk.Label(cadreEmployers)
+lblTxttHeures['text'] = 'Heures'
+lblTxttHeures['bg'] = '#969696'
+lblTxttHeures['fg'] = '#000000'
+lblTxttHeures['width'] = 20
+lblTxttHeures['height'] = 2
+lblTxttHeures['borderwidth'] = 2
+lblTxttHeures['relief'] = 'groove'
+lblTxttHeures['font'] = ('Arial', '12')
+lblTxttHeures.grid(row=0, column=3)
 
-lblTxtSalaire = tk.Label(cadreEmployers)
-lblTxtSalaire['text'] = 'Salaire'
-lblTxtSalaire['bg'] = '#969696'
-lblTxtSalaire['fg'] = '#000000'
-lblTxtSalaire['width'] = 20
-lblTxtSalaire['height'] = 2
-lblTxtSalaire['borderwidth'] = 2
-lblTxtSalaire['relief'] = 'groove'
-lblTxtSalaire['font'] = ('Arial', '12')
-lblTxtSalaire.grid(row=0, column=4)
+lblTxttSalaire = tk.Label(cadreEmployers)
+lblTxttSalaire['text'] = 'Salaire'
+lblTxttSalaire['bg'] = '#969696'
+lblTxttSalaire['fg'] = '#000000'
+lblTxttSalaire['width'] = 20
+lblTxttSalaire['height'] = 2
+lblTxttSalaire['borderwidth'] = 2
+lblTxttSalaire['relief'] = 'groove'
+lblTxttSalaire['font'] = ('Arial', '12')
+lblTxttSalaire.grid(row=0, column=4)
 
-
-# - Cadre Outils
-lblOutils = tk.Label(cadreOutils)
-lblOutils['text'] = 'Outils'
-lblOutils['bg'] = '#ffffff'
-lblOutils['fg'] = '#000000'
-lblOutils['font'] = ('Arial', '15', 'bold')
-lblOutils.grid(row=0, column=0, padx=10, pady=10)
-
-btnRechercher = tk.Button(cadreOutils)
+btnRechercher = tk.Button(cadreEmployersEntry)
 btnRechercher['image'] = imgLoupe
 btnRechercher['relief'] = 'flat'
 btnRechercher['bg'] = '#ffffff'
 btnRechercher['fg'] = '#000000'
 btnRechercher['font'] = ('Arial', '12', 'bold')
 btnRechercher['command'] = popupRecherche
-btnRechercher.grid(row=1, column=0)
+btnRechercher.grid(row=2, column=2)
 
 
 
@@ -565,7 +566,7 @@ def update(x):
          lblSalaire.grid(row=i+1, column=4)
    else:
       for i in cadreEmployers.winfo_children():
-         if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire:
+         if i != lblTxttNom and i != lblTxttPrenom and i != lblTxttPoste and i != lblTxttHeures and i != lblTxttSalaire:
             i.destroy()
          else:
             pass
