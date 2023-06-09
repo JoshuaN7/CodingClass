@@ -25,6 +25,8 @@ Faire des ajouts pour rendre l'expérience usager intéressante.
 # - Importaion des modules ------------------------------------------------------------------------------------------
 import tkinter as tk
 
+#ADD BONUSESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+
 # - Programme principal ------------------------------------------------------------------------------------------
 
 # - Variables
