@@ -723,7 +723,7 @@ def cadre():
 def instructions():
    cadreInsturctions = tk.Frame(fenetre)
    cadreInsturctions['bg'] = arriereplan1
-   cadreInsturctions.grid(row=0, column=0, rowspan=3, columnspan=4, sticky='nsew')
+   cadreInsturctions.grid(row=0, column=0, rowspan=6, columnspan=4, sticky='nsew')
 
    lblInstructions = tk.Label(cadreInsturctions)
    lblInstructions['text'] = 'Instructions'
