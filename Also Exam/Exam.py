@@ -716,7 +716,31 @@ def cadre():
    btnRechercher['command'] = popupRecherche
    btnRechercher.grid(row=2, column=2)
 
+   instructions()
+
    fenetre.mainloop()
+
+def instructions():
+   cadreInsturctions = tk.Frame(fenetre)
+   cadreInsturctions['bg'] = arriereplan1
+   cadreInsturctions.grid(row=0, column=0, rowspan=3, columnspan=4, sticky='nsew')
+
+   lblInstructions = tk.Label(cadreInsturctions)
+   lblInstructions['text'] = 'Instructions'
+   lblInstructions['bg'] = arriereplan1
+   lblInstructions['fg'] = '#000000'
+   lblInstructions['font'] = ('Calibri', '12', 'bold')
+   lblInstructions.grid(row=0, column=0, sticky='nsew')
+
+   btnFermer = tk.Button(cadreInsturctions)
+   btnFermer['text'] = 'Continuer'
+   btnFermer['bg'] = '#ffffff'
+   btnFermer['fg'] = '#000000'
+   btnFermer['font'] = ('Calibri', '12', 'bold')
+   btnFermer['command'] = cadreInsturctions.destroy
+   btnFermer.grid(row=1, column=0)
+
+   
 
 
 
