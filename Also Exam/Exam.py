@@ -49,6 +49,7 @@ types = ["Nom", "Prenom", "Poste", "Heures", "Salaire"]
 employesTrouves = []
 arriereplan1 = '#8cbbf1'
 arriereplan2 = '#d7dde9'
+boites = '#fdfdff'
 
 # - Fonctions
 def calcul_salaire(heures, taux_horaire):
@@ -161,14 +162,18 @@ def search():
     if motcle.get() and typeRecherche.get():
         recherche = motcle.get()
         typeSearch = typeRecherche.get()
-        if isinstance(recherche, float):
+        if sinombre(recherche) == True:
             for i in employes:
-                if isinstance(i[typeSearch.lower()], float) and float(recherche) == float(i[typeSearch]):
+                if float(recherche) == float(i[typeSearch.lower()]):
                     employesTrouves.append(i)
+                else:
+                    pass
         else:
             for i in employes:
                 if recherche.lower() in str(i[typeSearch.lower()]).lower():
                     employesTrouves.append(i)
+                else:
+                    pass
         
         if len(employesTrouves) == 0:
             erreur("Aucun résultat trouvé", "Recherche")
@@ -212,7 +217,7 @@ def popupRecherche():
 
    motcle = tk.StringVar()
    entRecherche = tk.Entry(cadreRecherche)
-   entRecherche['bg'] = '#fdfdff'
+   entRecherche['bg'] = boites
    entRecherche['fg'] = '#000000'
    entRecherche['textvariable'] = motcle
    entRecherche['font'] = ('Calibri', '12')
@@ -221,14 +226,14 @@ def popupRecherche():
    typeRecherche = tk.StringVar()
    typeRecherche.set("Nom")
    dropType = tk.OptionMenu(cadreRecherche, typeRecherche, *types)
-   dropType['bg'] = '#fdfdff'
+   dropType['bg'] = boites
    dropType['fg'] = '#000000'
    dropType['font'] = ('Calibri', '12')
    dropType.grid(row=1, column=1)
 
    btnRechercher = tk.Button(cadreRecherche)
    btnRechercher['text'] = "Rechercher"
-   btnRechercher['bg'] = '#fdfdff'
+   btnRechercher['bg'] = boites
    btnRechercher['fg'] = '#000000'
    btnRechercher['font'] = ('Calibri', '12', 'bold')
    btnRechercher['command'] = search
@@ -294,7 +299,7 @@ def config():
    cadreConfiguration = tk.Toplevel()
    cadreConfiguration['bg'] = arriereplan1
    cadreConfiguration.title("Configuration")
-   cadreConfiguration.geometry("500x500")
+   cadreConfiguration.geometry("500x370")
 
    lblConfiguration = tk.Label(cadreConfiguration)
    lblConfiguration['text'] = "Configuration des variables \n (Valeurs décimales avec un point (ex: 0.5))"
@@ -312,7 +317,7 @@ def config():
 
    impotretenu = tk.StringVar()
    entlblimpotretenu = tk.Entry(cadreConfiguration)
-   entlblimpotretenu['bg'] = '#fdfdff'
+   entlblimpotretenu['bg'] = boites
    entlblimpotretenu['fg'] = '#000000'
    entlblimpotretenu['textvariable'] = impotretenu
    entlblimpotretenu['font'] = ('Calibri', '12')
@@ -327,7 +332,7 @@ def config():
 
    heurespourbonis = tk.StringVar()
    entlblheurespourbonis = tk.Entry(cadreConfiguration)
-   entlblheurespourbonis['bg'] = '#fdfdff'
+   entlblheurespourbonis['bg'] = boites
    entlblheurespourbonis['fg'] = '#000000'
    entlblheurespourbonis['textvariable'] = heurespourbonis
    entlblheurespourbonis['font'] = ('Calibri', '12')
@@ -342,7 +347,7 @@ def config():
 
    tauxbonis = tk.StringVar()
    entlbltauxbonis = tk.Entry(cadreConfiguration)
-   entlbltauxbonis['bg'] = '#fdfdff'
+   entlbltauxbonis['bg'] = boites
    entlbltauxbonis['fg'] = '#000000'
    entlbltauxbonis['textvariable'] = tauxbonis
    entlbltauxbonis['font'] = ('Calibri', '12')
@@ -350,7 +355,7 @@ def config():
 
    btnSoumettre = tk.Button(cadreConfiguration)
    btnSoumettre['text'] = "Soumettre"
-   btnSoumettre['bg'] = '#fdfdff'
+   btnSoumettre['bg'] = boites
    btnSoumettre['fg'] = '#000000'
    btnSoumettre['font'] = ('Calibri', '12')
    btnSoumettre['command'] = soumettre
@@ -377,7 +382,83 @@ def soumettre():
       cadreConfiguration.destroy()
 
 def pref():
-   print("Préférences")
+   global cadrePref, couleur, couleur2, boite
+   cadrePref = tk.Toplevel()
+   cadrePref['bg'] = arriereplan1
+   cadrePref.title("Préférences")
+   cadrePref.geometry("600x380")
+
+   lblPref = tk.Label(cadrePref)
+   lblPref['text'] = "Préférences \n(Utiliser des codes hexadécimaux (ex: #000000)\n(Cliquer sur soummetre recommencera le programme))"
+   lblPref['bg'] = arriereplan1
+   lblPref['fg'] = '#000000'
+   lblPref['font'] = ('Calibri', '12', 'bold')
+   lblPref.grid(row=0, column=0, columnspan=2, pady=20, padx=100)
+
+   lblCouleur = tk.Label(cadrePref)
+   lblCouleur['text'] = "Couleur de l'arrière-plan"
+   lblCouleur['bg'] = arriereplan1
+   lblCouleur['fg'] = '#000000'
+   lblCouleur['font'] = ('Calibri', '12')
+   lblCouleur.grid(row=1, column=0, pady=20)
+
+   couleur = tk.StringVar()
+   entCouleur = tk.Entry(cadrePref)
+   entCouleur['bg'] = boites
+   entCouleur['fg'] = '#000000'
+   entCouleur['textvariable'] = couleur
+   entCouleur['font'] = ('Calibri', '12')
+   entCouleur.grid(row=1, column=1, pady=20)
+
+   lblCouleur2 = tk.Label(cadrePref)
+   lblCouleur2['text'] = "Couleur des cellules"
+   lblCouleur2['bg'] = arriereplan1
+   lblCouleur2['fg'] = '#000000'
+   lblCouleur2['font'] = ('Calibri', '12')
+   lblCouleur2.grid(row=2, column=0, pady=20)
+
+   couleur2 = tk.StringVar()
+   entCouleur2 = tk.Entry(cadrePref)
+   entCouleur2['bg'] = boites
+   entCouleur2['fg'] = '#000000'
+   entCouleur2['textvariable'] = couleur2
+   entCouleur2['font'] = ('Calibri', '12')
+   entCouleur2.grid(row=2, column=1, pady=20)
+
+   boite = tk.StringVar()
+   lblBoite = tk.Label(cadrePref)
+   lblBoite['text'] = "Couleur des bouttons"
+   lblBoite['bg'] = arriereplan1
+   lblBoite['fg'] = '#000000'
+   lblBoite['font'] = ('Calibri', '12')
+   lblBoite.grid(row=3, column=0, pady=20)
+
+   entBoite = tk.Entry(cadrePref)
+   entBoite['bg'] = boites
+   entBoite['fg'] = '#000000'
+   entBoite['textvariable'] = boite
+   entBoite['font'] = ('Calibri', '12')
+   entBoite.grid(row=3, column=1, pady=20)
+
+   btnSoumettrePref = tk.Button(cadrePref)
+   btnSoumettrePref['text'] = "Soumettre"
+   btnSoumettrePref['bg'] = boites
+   btnSoumettrePref['fg'] = '#000000'
+   btnSoumettrePref['font'] = ('Calibri', '12')
+   btnSoumettrePref['command'] = soumettrePref
+   btnSoumettrePref.grid(row=4, column=0, columnspan=2, pady=20)
+
+
+def soumettrePref():
+   global arriereplan1, arriereplan2, boites, cadreResultat, cadrePref, cadreEmployers, cadreEmployersEntry, cadreConfiguration
+   arriereplan1 = couleur.get()
+   arriereplan2 = couleur2.get()
+   boites = boite.get()
+   fenetre.destroy()
+   cadre()
+   update()
+   
+
 
 def sinombre(x):
    try:
@@ -415,223 +496,227 @@ def erreur(message, endroit):
    else:
       pass
 
-# - Fenetre
-fenetre = tk.Tk()
-fenetre.title("Comptabilité - Restaurant")
-fenetre.geometry("830x740")
-fenetre['bg'] = '#ffffff'
+def cadre():
+   global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers
+   # - Fenetre
+   fenetre = tk.Tk()
+   fenetre.title("Comptabilité")
+   fenetre.geometry("830x740")
+   fenetre['bg'] = '#ffffff'
 
-fenetre.columnconfigure(0, weight=1)
-fenetre.columnconfigure(1, weight=1)
-fenetre.columnconfigure(2, weight=1)
-fenetre.columnconfigure(3, weight=1)
-fenetre.rowconfigure(0, weight=1)
-fenetre.rowconfigure(1, weight=1)
-fenetre.rowconfigure(2, weight=1)
-fenetre.rowconfigure(3, weight=1)
-fenetre.rowconfigure(4, weight=1)
+   fenetre.columnconfigure(0, weight=1)
+   fenetre.columnconfigure(1, weight=1)
+   fenetre.columnconfigure(2, weight=1)
+   fenetre.columnconfigure(3, weight=1)
+   fenetre.rowconfigure(0, weight=1)
+   fenetre.rowconfigure(1, weight=1)
+   fenetre.rowconfigure(2, weight=1)
+   fenetre.rowconfigure(3, weight=1)
+   fenetre.rowconfigure(4, weight=1)
 
-# - Menus
-mnuBarreMenu = tk.Menu(fenetre)
-fenetre['menu'] = mnuBarreMenu
+   # - Menus
+   mnuBarreMenu = tk.Menu(fenetre)
+   fenetre['menu'] = mnuBarreMenu
 
-mnuFichier = tk.Menu(mnuBarreMenu, tearoff=0)
-mnuBarreMenu.add_cascade(label="Fichier", menu=mnuFichier)
-mnuFichier.add_command(label="Quitter", command=fenetre.destroy)
+   mnuFichier = tk.Menu(mnuBarreMenu, tearoff=0)
+   mnuBarreMenu.add_cascade(label="Fichier", menu=mnuFichier)
+   mnuFichier.add_command(label="Quitter", command=fenetre.destroy)
 
-mnuOptions = tk.Menu(mnuBarreMenu, tearoff=0)
+   mnuOptions = tk.Menu(mnuBarreMenu, tearoff=0)
 
-mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
-mnuOptions.add_command(label="Configuration", command=config)
-mnuOptions.add_command(label="Préférences", command=pref)
+   mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
+   mnuOptions.add_command(label="Configuration", command=config)
+   mnuOptions.add_command(label="Préférences", command=pref)
 
-# - images
-imgFlecheGauche = tk.PhotoImage(file="flechegauche.gif")
-imgFlecheDroite = tk.PhotoImage(file="flechedroite.gif")
-imgLoupe = tk.PhotoImage(file="loupe.gif")
+   # - images
+   imgFlecheGauche = tk.PhotoImage(file="flechegauche.gif")
+   imgFlecheDroite = tk.PhotoImage(file="flechedroite.gif")
+   imgLoupe = tk.PhotoImage(file="loupe.gif")
 
-# - Cadres
-cadreEmployers = tk.Frame(fenetre)
-cadreEmployers['bg'] = '#ffffff'
-cadreEmployers.grid(row=1, column=0, rowspan=4, columnspan=4, sticky='nsew')
-cadreEmployers.grid_propagate(0)
+   # - Cadres
+   cadreEmployers = tk.Frame(fenetre)
+   cadreEmployers['bg'] = '#ffffff'
+   cadreEmployers.grid(row=1, column=0, rowspan=4, columnspan=4, sticky='nsew')
+   cadreEmployers.grid_propagate(0)
 
-cadreEmployersEntry = tk.Frame(fenetre)
-cadreEmployersEntry['bg'] = arriereplan1
-cadreEmployersEntry.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
+   cadreEmployersEntry = tk.Frame(fenetre)
+   cadreEmployersEntry['bg'] = arriereplan1
+   cadreEmployersEntry.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
 
-# - Bind
-fenetre.bind("<Return>", lambda x: ajouter())
+   # - Bind
+   fenetre.bind("<Return>", lambda x: ajouter())
 
-# - Cadre EmployersEntry
-cadreEmployersEntry.columnconfigure(0, weight=1)
-cadreEmployersEntry.columnconfigure(1, weight=1)
-cadreEmployersEntry.columnconfigure(2, weight=1)
-cadreEmployersEntry.columnconfigure(3, weight=1)
-cadreEmployersEntry.rowconfigure(0, weight=1)
-cadreEmployersEntry.rowconfigure(1, weight=1)
-cadreEmployersEntry.rowconfigure(2, weight=1)
+   # - Cadre EmployersEntry
+   cadreEmployersEntry.columnconfigure(0, weight=1)
+   cadreEmployersEntry.columnconfigure(1, weight=1)
+   cadreEmployersEntry.columnconfigure(2, weight=1)
+   cadreEmployersEntry.columnconfigure(3, weight=1)
+   cadreEmployersEntry.rowconfigure(0, weight=1)
+   cadreEmployersEntry.rowconfigure(1, weight=1)
+   cadreEmployersEntry.rowconfigure(2, weight=1)
 
-lblNom = tk.Label(cadreEmployersEntry)
-lblNom['text'] = 'Nom'
-lblNom['bg'] = arriereplan1
-lblNom['fg'] = '#000000'
-lblNom['font'] = ('Calibri', '12', 'bold')
-lblNom.grid(row=0, column=0)
+   lblNom = tk.Label(cadreEmployersEntry)
+   lblNom['text'] = 'Nom'
+   lblNom['bg'] = arriereplan1
+   lblNom['fg'] = '#000000'
+   lblNom['font'] = ('Calibri', '12', 'bold')
+   lblNom.grid(row=0, column=0)
 
-lblPrenom = tk.Label(cadreEmployersEntry)
-lblPrenom['text'] = 'Prénom'
-lblPrenom['bg'] = arriereplan1
-lblPrenom['fg'] = '#000000'
-lblPrenom['font'] = ('Calibri', '12', 'bold')
-lblPrenom.grid(row=0, column=1)
+   lblPrenom = tk.Label(cadreEmployersEntry)
+   lblPrenom['text'] = 'Prénom'
+   lblPrenom['bg'] = arriereplan1
+   lblPrenom['fg'] = '#000000'
+   lblPrenom['font'] = ('Calibri', '12', 'bold')
+   lblPrenom.grid(row=0, column=1)
 
-lblPoste = tk.Label(cadreEmployersEntry)
-lblPoste['text'] = 'Poste'
-lblPoste['bg'] = arriereplan1
-lblPoste['fg'] = '#000000'
-lblPoste['font'] = ('Calibri', '12', 'bold')
-lblPoste.grid(row=0, column=2)
+   lblPoste = tk.Label(cadreEmployersEntry)
+   lblPoste['text'] = 'Poste'
+   lblPoste['bg'] = arriereplan1
+   lblPoste['fg'] = '#000000'
+   lblPoste['font'] = ('Calibri', '12', 'bold')
+   lblPoste.grid(row=0, column=2)
 
-lblHeures = tk.Label(cadreEmployersEntry)
-lblHeures['text'] = 'Heures'
-lblHeures['bg'] = arriereplan1
-lblHeures['fg'] = '#000000'
-lblHeures['font'] = ('Calibri', '12', 'bold')
-lblHeures.grid(row=0, column=3)
+   lblHeures = tk.Label(cadreEmployersEntry)
+   lblHeures['text'] = 'Heures'
+   lblHeures['bg'] = arriereplan1
+   lblHeures['fg'] = '#000000'
+   lblHeures['font'] = ('Calibri', '12', 'bold')
+   lblHeures.grid(row=0, column=3)
 
-nom = tk.StringVar()
-entNom = tk.Entry(cadreEmployersEntry)
-entNom['bg'] = '#fdfdff'
-entNom['fg'] = '#000000'
-entNom['font'] = ('Calibri', '12')
-entNom['textvariable'] = nom
-entNom.grid(row=1, column=0)
+   nom = tk.StringVar()
+   entNom = tk.Entry(cadreEmployersEntry)
+   entNom['bg'] = boites
+   entNom['fg'] = '#000000'
+   entNom['font'] = ('Calibri', '12')
+   entNom['textvariable'] = nom
+   entNom.grid(row=1, column=0)
 
-prenom = tk.StringVar()
-entPrenom = tk.Entry(cadreEmployersEntry)
-entPrenom['bg'] = '#fdfdff'
-entPrenom['fg'] = '#000000'
-entPrenom['font'] = ('Calibri', '12')
-entPrenom['textvariable'] = prenom
-entPrenom.grid(row=1, column=1)
+   prenom = tk.StringVar()
+   entPrenom = tk.Entry(cadreEmployersEntry)
+   entPrenom['bg'] = boites
+   entPrenom['fg'] = '#000000'
+   entPrenom['font'] = ('Calibri', '12')
+   entPrenom['textvariable'] = prenom
+   entPrenom.grid(row=1, column=1)
 
-poste = tk.StringVar()
-poste.set("Poste")
-dropPoste = tk.OptionMenu(cadreEmployersEntry, poste, *postesoptions)
-dropPoste['bg'] = '#fdfdff'
-dropPoste['fg'] = '#000000'
-dropPoste['font'] = ('Calibri', '12')
-dropPoste.grid(row=1, column=2)
+   poste = tk.StringVar()
+   poste.set("Poste")
+   dropPoste = tk.OptionMenu(cadreEmployersEntry, poste, *postesoptions)
+   dropPoste['bg'] = boites
+   dropPoste['fg'] = '#000000'
+   dropPoste['font'] = ('Calibri', '12')
+   dropPoste.grid(row=1, column=2)
 
-heures = tk.StringVar()
-entHeures = tk.Entry(cadreEmployersEntry)
-entHeures['bg'] = '#fdfdff'
-entHeures['fg'] = '#000000'
-entHeures['font'] = ('Calibri', '12')
-entHeures['textvariable'] = heures
-entHeures.grid(row=1, column=3)
+   heures = tk.StringVar()
+   entHeures = tk.Entry(cadreEmployersEntry)
+   entHeures['bg'] = boites
+   entHeures['fg'] = '#000000'
+   entHeures['font'] = ('Calibri', '12')
+   entHeures['textvariable'] = heures
+   entHeures.grid(row=1, column=3)
 
-btnAjouter = tk.Button(cadreEmployersEntry)
-btnAjouter['text'] = 'Ajouter'
-btnAjouter['bg'] = '#fdfdff'
-btnAjouter['fg'] = '#000000'
-btnAjouter['font'] = ('Calibri', '12', 'bold')
-btnAjouter['command'] = ajouter
-btnAjouter.grid(row=2, column=1)
+   btnAjouter = tk.Button(cadreEmployersEntry)
+   btnAjouter['text'] = 'Ajouter'
+   btnAjouter['bg'] = boites
+   btnAjouter['fg'] = '#000000'
+   btnAjouter['font'] = ('Calibri', '12', 'bold')
+   btnAjouter['command'] = ajouter
+   btnAjouter.grid(row=2, column=1)
 
-# - Porchain page
-btnProchain = tk.Button(fenetre)
-btnProchain['image'] = imgFlecheDroite
-btnProchain['relief'] = 'flat'
-btnProchain['bg'] = '#ffffff'
-btnProchain['fg'] = '#000000'
-btnProchain['font'] = ('Calibri', '12', 'bold')
-btnProchain['command'] = prochain
-btnProchain.grid(row=5, column=3, sticky='e')
+   # - Porchain page
+   btnProchain = tk.Button(fenetre)
+   btnProchain['image'] = imgFlecheDroite
+   btnProchain['relief'] = 'flat'
+   btnProchain['bg'] = '#ffffff'
+   btnProchain['fg'] = '#000000'
+   btnProchain['font'] = ('Calibri', '12', 'bold')
+   btnProchain['command'] = prochain
+   btnProchain.grid(row=5, column=3, sticky='e')
 
-# - Page précédente
-btnPrecedent = tk.Button(fenetre)
-btnPrecedent['image'] = imgFlecheGauche
-btnPrecedent['relief'] = 'flat'
-btnPrecedent['bg'] = '#ffffff'
-btnPrecedent['fg'] = '#000000'
-btnPrecedent['font'] = ('Calibri', '12', 'bold')
-btnPrecedent['command'] = precedent
-btnPrecedent.grid(row=5, column=0, sticky='w')
+   # - Page précédente
+   btnPrecedent = tk.Button(fenetre)
+   btnPrecedent['image'] = imgFlecheGauche
+   btnPrecedent['relief'] = 'flat'
+   btnPrecedent['bg'] = '#ffffff'
+   btnPrecedent['fg'] = '#000000'
+   btnPrecedent['font'] = ('Calibri', '12', 'bold')
+   btnPrecedent['command'] = precedent
+   btnPrecedent.grid(row=5, column=0, sticky='w')
 
-lblPage = tk.Label(fenetre)
-lblPage['text'] = 'Page {} sur {}'.format(1,1)
-lblPage['bg'] = '#ffffff'
-lblPage['fg'] = '#000000'
-lblPage['font'] = ('Calibri', '12', 'bold')
-lblPage.grid(row=5, column=1, columnspan=2)
+   lblPage = tk.Label(fenetre)
+   lblPage['text'] = 'Page {} sur {}'.format(1,1)
+   lblPage['bg'] = '#ffffff'
+   lblPage['fg'] = '#000000'
+   lblPage['font'] = ('Calibri', '12', 'bold')
+   lblPage.grid(row=5, column=1, columnspan=2)
 
 
-# - Cadre Employers
-lblTxttNom = tk.Label(cadreEmployers)
-lblTxttNom['text'] = 'Nom'
-lblTxttNom['bg'] = arriereplan2
-lblTxttNom['fg'] = '#000000'
-lblTxttNom['width'] = 20
-lblTxttNom['height'] = 2
-lblTxttNom['borderwidth'] = 2
-lblTxttNom['relief'] = 'groove'
-lblTxttNom['font'] = ('Calibri', '12', 'bold')
-lblTxttNom.grid(row=0, column=0)
+   # - Cadre Employers
+   lblTxttNom = tk.Label(cadreEmployers)
+   lblTxttNom['text'] = 'Nom'
+   lblTxttNom['bg'] = arriereplan2
+   lblTxttNom['fg'] = '#000000'
+   lblTxttNom['width'] = 20
+   lblTxttNom['height'] = 2
+   lblTxttNom['borderwidth'] = 2
+   lblTxttNom['relief'] = 'groove'
+   lblTxttNom['font'] = ('Calibri', '12', 'bold')
+   lblTxttNom.grid(row=0, column=0)
 
-lblTxttPrenom = tk.Label(cadreEmployers)
-lblTxttPrenom['text'] = 'Prénom'
-lblTxttPrenom['bg'] = arriereplan2
-lblTxttPrenom['fg'] = '#000000'
-lblTxttPrenom['width'] = 20
-lblTxttPrenom['height'] = 2
-lblTxttPrenom['borderwidth'] = 2
-lblTxttPrenom['relief'] = 'groove'
-lblTxttPrenom['font'] = ('Calibri', '12', 'bold')
-lblTxttPrenom.grid(row=0, column=1)
+   lblTxttPrenom = tk.Label(cadreEmployers)
+   lblTxttPrenom['text'] = 'Prénom'
+   lblTxttPrenom['bg'] = arriereplan2
+   lblTxttPrenom['fg'] = '#000000'
+   lblTxttPrenom['width'] = 20
+   lblTxttPrenom['height'] = 2
+   lblTxttPrenom['borderwidth'] = 2
+   lblTxttPrenom['relief'] = 'groove'
+   lblTxttPrenom['font'] = ('Calibri', '12', 'bold')
+   lblTxttPrenom.grid(row=0, column=1)
 
-lblTxttPoste = tk.Label(cadreEmployers)
-lblTxttPoste['text'] = 'Poste'
-lblTxttPoste['bg'] = arriereplan2
-lblTxttPoste['fg'] = '#000000'
-lblTxttPoste['width'] = 20
-lblTxttPoste['height'] = 2
-lblTxttPoste['borderwidth'] = 2
-lblTxttPoste['relief'] = 'groove'
-lblTxttPoste['font'] = ('Calibri', '12', 'bold')
-lblTxttPoste.grid(row=0, column=2)
+   lblTxttPoste = tk.Label(cadreEmployers)
+   lblTxttPoste['text'] = 'Poste'
+   lblTxttPoste['bg'] = arriereplan2
+   lblTxttPoste['fg'] = '#000000'
+   lblTxttPoste['width'] = 20
+   lblTxttPoste['height'] = 2
+   lblTxttPoste['borderwidth'] = 2
+   lblTxttPoste['relief'] = 'groove'
+   lblTxttPoste['font'] = ('Calibri', '12', 'bold')
+   lblTxttPoste.grid(row=0, column=2)
 
-lblTxttHeures = tk.Label(cadreEmployers)
-lblTxttHeures['text'] = 'Heures'
-lblTxttHeures['bg'] = arriereplan2
-lblTxttHeures['fg'] = '#000000'
-lblTxttHeures['width'] = 20
-lblTxttHeures['height'] = 2
-lblTxttHeures['borderwidth'] = 2
-lblTxttHeures['relief'] = 'groove'
-lblTxttHeures['font'] = ('Calibri', '12', 'bold')
-lblTxttHeures.grid(row=0, column=3)
+   lblTxttHeures = tk.Label(cadreEmployers)
+   lblTxttHeures['text'] = 'Heures'
+   lblTxttHeures['bg'] = arriereplan2
+   lblTxttHeures['fg'] = '#000000'
+   lblTxttHeures['width'] = 20
+   lblTxttHeures['height'] = 2
+   lblTxttHeures['borderwidth'] = 2
+   lblTxttHeures['relief'] = 'groove'
+   lblTxttHeures['font'] = ('Calibri', '12', 'bold')
+   lblTxttHeures.grid(row=0, column=3)
 
-lblTxttSalaire = tk.Label(cadreEmployers)
-lblTxttSalaire['text'] = 'Salaire'
-lblTxttSalaire['bg'] = arriereplan2
-lblTxttSalaire['fg'] = '#000000'
-lblTxttSalaire['width'] = 20
-lblTxttSalaire['height'] = 2
-lblTxttSalaire['borderwidth'] = 2
-lblTxttSalaire['relief'] = 'groove'
-lblTxttSalaire['font'] = ('Calibri', '12', 'bold')
-lblTxttSalaire.grid(row=0, column=4)
+   lblTxttSalaire = tk.Label(cadreEmployers)
+   lblTxttSalaire['text'] = 'Salaire'
+   lblTxttSalaire['bg'] = arriereplan2
+   lblTxttSalaire['fg'] = '#000000'
+   lblTxttSalaire['width'] = 20
+   lblTxttSalaire['height'] = 2
+   lblTxttSalaire['borderwidth'] = 2
+   lblTxttSalaire['relief'] = 'groove'
+   lblTxttSalaire['font'] = ('Calibri', '12', 'bold')
+   lblTxttSalaire.grid(row=0, column=4)
 
-btnRechercher = tk.Button(cadreEmployersEntry)
-btnRechercher['image'] = imgLoupe
-btnRechercher['relief'] = 'flat'
-btnRechercher['bg'] = '#ffffff'
-btnRechercher['fg'] = '#000000'
-btnRechercher['font'] = ('Calibri', '12', 'bold')
-btnRechercher['command'] = popupRecherche
-btnRechercher.grid(row=2, column=2)
+   btnRechercher = tk.Button(cadreEmployersEntry)
+   btnRechercher['image'] = imgLoupe
+   btnRechercher['relief'] = 'flat'
+   btnRechercher['bg'] = '#ffffff'
+   btnRechercher['fg'] = '#000000'
+   btnRechercher['font'] = ('Calibri', '12', 'bold')
+   btnRechercher['command'] = popupRecherche
+   btnRechercher.grid(row=2, column=2)
+
+   fenetre.mainloop()
 
 
 
@@ -757,4 +842,4 @@ def update(x):
          lblSalaire['font'] = ('Calibri', '12')
          lblSalaire.grid(row=i+1, column=4)
 
-fenetre.mainloop()
+cadre()
