@@ -43,6 +43,8 @@ postesoptions = {
    'Caissier' : 15.98
 }
 impot_retenu = 0.105  #10,5% de retenu sur le salaire
+heures_pour_bonis = 160
+bonis = 5
 types = ["Nom", "Prenom", "Poste", "Heures", "Salaire"]
 employesTrouves = []
 arriereplan1 = '#8cbbf1'
@@ -50,8 +52,15 @@ arriereplan2 = '#d7dde9'
 
 # - Fonctions
 def calcul_salaire(heures, taux_horaire):
+
+   global impot_retenu, heures_pour_bonis, bonis
    nb_heures = int(heures)
+   heurespourbonis = int(heures_pour_bonis)
    salaire = nb_heures * taux_horaire
+   if nb_heures >=heurespourbonis:
+      salaire = salaire*(1+bonis/100)
+   else:
+      pass
    impot = salaire * impot_retenu
    salaire_net = salaire - impot
    return salaire_net
@@ -154,7 +163,7 @@ def search():
         typeSearch = typeRecherche.get()
         if isinstance(recherche, float):
             for i in employes:
-                if isinstance(i[typeSearch.lower()], float) and recherche == i[typeSearch.lower()]:
+                if isinstance(i[typeSearch.lower()], float) and float(recherche) == float(i[typeSearch]):
                     employesTrouves.append(i)
         else:
             for i in employes:
@@ -280,6 +289,104 @@ def popupRecherche():
    lblTxtSalaire['font'] = ('Calibri', '12')
    lblTxtSalaire.grid(row=0, column=4)
 
+def config():
+   global impotretenu, heurespourbonis, tauxbonis, cadreConfiguration
+   cadreConfiguration = tk.Toplevel()
+   cadreConfiguration['bg'] = arriereplan1
+   cadreConfiguration.title("Configuration")
+   cadreConfiguration.geometry("500x500")
+
+   lblConfiguration = tk.Label(cadreConfiguration)
+   lblConfiguration['text'] = "Configuration des variables \n (Valeurs décimales avec un point (ex: 0.5))"
+   lblConfiguration['bg'] = arriereplan1
+   lblConfiguration['fg'] = '#000000'
+   lblConfiguration['font'] = ('Calibri', '12', 'bold')
+   lblConfiguration.grid(row=0, column=0, columnspan=2, pady=20, padx=90)
+
+   lblimpotretenu = tk.Label(cadreConfiguration)
+   lblimpotretenu['text'] = "Impôt retenu"
+   lblimpotretenu['bg'] = arriereplan1
+   lblimpotretenu['fg'] = '#000000'
+   lblimpotretenu['font'] = ('Calibri', '12')
+   lblimpotretenu.grid(row=1, column=0, pady=20)
+
+   impotretenu = tk.StringVar()
+   entlblimpotretenu = tk.Entry(cadreConfiguration)
+   entlblimpotretenu['bg'] = '#fdfdff'
+   entlblimpotretenu['fg'] = '#000000'
+   entlblimpotretenu['textvariable'] = impotretenu
+   entlblimpotretenu['font'] = ('Calibri', '12')
+   entlblimpotretenu.grid(row=1, column=1, pady=20)
+
+   lblheurespourbonis = tk.Label(cadreConfiguration)
+   lblheurespourbonis['text'] = "Heures pour bonis"
+   lblheurespourbonis['bg'] = arriereplan1
+   lblheurespourbonis['fg'] = '#000000'
+   lblheurespourbonis['font'] = ('Calibri', '12')
+   lblheurespourbonis.grid(row=2, column=0, pady=20)
+
+   heurespourbonis = tk.StringVar()
+   entlblheurespourbonis = tk.Entry(cadreConfiguration)
+   entlblheurespourbonis['bg'] = '#fdfdff'
+   entlblheurespourbonis['fg'] = '#000000'
+   entlblheurespourbonis['textvariable'] = heurespourbonis
+   entlblheurespourbonis['font'] = ('Calibri', '12')
+   entlblheurespourbonis.grid(row=2, column=1, pady=20)
+
+   lbltauxbonis = tk.Label(cadreConfiguration)
+   lbltauxbonis['text'] = "Taux de bonis"
+   lbltauxbonis['bg'] = arriereplan1
+   lbltauxbonis['fg'] = '#000000'
+   lbltauxbonis['font'] = ('Calibri', '12')
+   lbltauxbonis.grid(row=3, column=0, pady=20)
+
+   tauxbonis = tk.StringVar()
+   entlbltauxbonis = tk.Entry(cadreConfiguration)
+   entlbltauxbonis['bg'] = '#fdfdff'
+   entlbltauxbonis['fg'] = '#000000'
+   entlbltauxbonis['textvariable'] = tauxbonis
+   entlbltauxbonis['font'] = ('Calibri', '12')
+   entlbltauxbonis.grid(row=3, column=1, pady=20)  
+
+   btnSoumettre = tk.Button(cadreConfiguration)
+   btnSoumettre['text'] = "Soumettre"
+   btnSoumettre['bg'] = '#fdfdff'
+   btnSoumettre['fg'] = '#000000'
+   btnSoumettre['font'] = ('Calibri', '12')
+   btnSoumettre['command'] = soumettre
+   btnSoumettre.grid(row=4, column=0, columnspan=2, pady=20)
+   
+
+def soumettre():
+   global heures_pour_bonis, impot_retenu, bonis, impotretenu, heurespourbonis, tauxbonis
+
+   if sinombre(impotretenu.get()) == False:
+      erreur("L'impôt retenu doit être un nombre", "Configuration")
+   elif sinombre(heurespourbonis.get()) == False:
+      erreur("Les heures pour bonis doivent être un nombre", "Configuration")
+   elif sinombre(tauxbonis.get()) == False:
+      erreur("Le taux de bonis doit être un nombre", "Configuration")
+   else:
+      try:
+         lblErreur.destroy()
+      except:
+         pass
+      impot_retenu = float(impotretenu.get())
+      heures_pour_bonis = float(heurespourbonis.get())
+      bonis = float(tauxbonis.get())
+      cadreConfiguration.destroy()
+
+def pref():
+   print("Préférences")
+
+def sinombre(x):
+   try:
+      float(x)
+      return True
+   except ValueError:
+      return False
+
+
 
 def erreur(message, endroit):
    global lblErreur
@@ -291,13 +398,20 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=3, column=0, columnspan=4, sticky='nsew')
-   if endroit == "Recherche":
+   elif endroit == "Recherche":
       lblErreur = tk.Label(cadreRecherche)
       lblErreur['text'] = message
-      lblErreur['bg'] = '#ffffff'
+      lblErreur['bg'] = arriereplan1
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=2, column=0, columnspan=3, sticky='nsew')
+   elif endroit == "Configuration":
+      lblErreur = tk.Label(cadreConfiguration)
+      lblErreur['text'] = message
+      lblErreur['bg'] = arriereplan1
+      lblErreur['fg'] = '#ff0000'
+      lblErreur['font'] = ('Calibri', '12', 'bold')
+      lblErreur.grid(row=5, column=0, columnspan=3, sticky='nsew')
    else:
       pass
 
@@ -316,6 +430,20 @@ fenetre.rowconfigure(1, weight=1)
 fenetre.rowconfigure(2, weight=1)
 fenetre.rowconfigure(3, weight=1)
 fenetre.rowconfigure(4, weight=1)
+
+# - Menus
+mnuBarreMenu = tk.Menu(fenetre)
+fenetre['menu'] = mnuBarreMenu
+
+mnuFichier = tk.Menu(mnuBarreMenu, tearoff=0)
+mnuBarreMenu.add_cascade(label="Fichier", menu=mnuFichier)
+mnuFichier.add_command(label="Quitter", command=fenetre.destroy)
+
+mnuOptions = tk.Menu(mnuBarreMenu, tearoff=0)
+
+mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
+mnuOptions.add_command(label="Configuration", command=config)
+mnuOptions.add_command(label="Préférences", command=pref)
 
 # - images
 imgFlecheGauche = tk.PhotoImage(file="flechegauche.gif")
@@ -560,7 +688,7 @@ def update(x):
          lblHeures.grid(row=i+1, column=3)
 
          lblSalaire = tk.Label(cadreResultat)
-         lblSalaire['text'] = "{:.2f} $".format(trouve["salaire"])
+         lblSalaire['text'] = "$ {:.2f}".format(trouve["salaire"])
          lblSalaire['bg'] = '#ffffff'
          lblSalaire['fg'] = '#000000'
          lblSalaire['relief'] = 'groove'
@@ -620,7 +748,7 @@ def update(x):
          lblHeures.grid(row=i+1, column=3)
 
          lblSalaire = tk.Label(cadreEmployers)
-         lblSalaire['text'] = "{:.2f} $".format(employe["salaire"])
+         lblSalaire['text'] = "$ {:.2f}".format(employe["salaire"])
          lblSalaire['bg'] = '#ffffff'
          lblSalaire['fg'] = '#000000'
          lblSalaire['relief'] = 'groove'
