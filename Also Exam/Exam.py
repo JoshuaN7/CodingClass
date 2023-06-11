@@ -32,8 +32,6 @@ import re
 
 # - Variables
 TEST = True
-rows = 0
-rowsrecherche = 0
 entreesParPage = 10
 entreesParPageRecherche = 5
 page_courant = 1
@@ -74,7 +72,7 @@ def calcul_salaire(heures, taux_horaire):
 # - Ajouter des entrées
 def ajouter():
    # - Variables globales
-   global employes, postesoptions, rows, TEST
+   global employes, postesoptions, TEST
 
    # - Supprimer le label d'erreur s'il existe
    try:
@@ -91,7 +89,6 @@ def ajouter():
             erreur("Veuillez choisir un poste", "EmployersEntry")
          else:
             # - Ajouter à rows
-            rows += 1
             employe = {
                "nom": nom.get(),
                "prenom": prenom.get(),
@@ -123,6 +120,7 @@ def clear():
 
 # - Séparer les employés en groupes selon le nombre d'entrées par page
 def grouper(x):
+
    # - Variables globales
    global entreesParPage, employes, groupes, groupesrecherche, entreesParPageRecherche, employesTrouves
 
@@ -156,13 +154,19 @@ def grouper(x):
       # - Mettre à jour le tableau de groupes
       update("Ajout")
 
+# - Mettre à jour les pages
 def updatePage(x):
+   # - Variables globales
       global page_courant, groupes, groupesrecherche, page_courant_recherche
+
+      # - Mettre à jour les pages por la fenêtre de recherche
       if x == "Recherche":
          lblPagee['text'] = "Page {} sur {}".format(page_courant_recherche, len(groupesrecherche))
+      # - Mettre à jour les pages por la fenêtre d'ajout
       else:
          lblPage['text'] = "Page {} sur {}".format(page_courant, len(groupes))
 
+# - Passer à la page suivante pour la fenêtre d'ajout
 def prochain():
    global page_courant, groupes
    nombreGroupes = len(groupes)
@@ -170,12 +174,14 @@ def prochain():
       page_courant += 1
       update("Ajout")
 
+# - Revenir à la page précédente pour la fenêtre d'ajout
 def precedent():
    global page_courant, groupes
    if page_courant > 1:
       page_courant -= 1
       update("Ajout")
 
+# - Passer à la page suivante pour la fenêtre de recherche
 def prochainRecherche():
    global page_courant_recherche, groupesrecherche
    nombreGroupes = len(groupesrecherche)
@@ -183,52 +189,101 @@ def prochainRecherche():
       page_courant_recherche += 1
       update("recherche")
 
+# - Revenir à la page précédente pour la fenêtre de recherche
 def precedentRecherche():
    global page_courant_recherche, groupesrecherche
    if page_courant_recherche > 1:
       page_courant_recherche -= 1
       update("recherche")
 
+# - Rechercher un employé qui correspond à la recherche
 def search():
-    global typeRecherche, motcle, employesTrouves, lblErreur, rowsrecherche
+    
+    # - Variables globales
+    global typeRecherche, motcle, employesTrouves, lblErreur, rowsrecherche, page_courant_recherche
+
+    # - Renitialiser la page courante de la fenêtre de recherche
+    page_courant_recherche = 1
+    # - Effacer les erreurs
     try: 
         lblErreur.destroy()
     except:
         pass
+    # - Effacer les employés trouvés
     employesTrouves.clear()
+
+    # - Verifier si les champs sont remplis
     if motcle.get() and typeRecherche.get():
-        recherche = motcle.get()
-        typeSearch = typeRecherche.get()
-        if sinombre(recherche) == True:
-            for i in employes:
-                if float(recherche) == float(i[typeSearch.lower()]):
-                    employesTrouves.append(i)
-                    grouper("Recherche")
-                else:
-                    pass
-        else:
-            for i in employes:
-                if recherche.lower() in str(i[typeSearch.lower()]).lower():
-                    employesTrouves.append(i)
-                    grouper("Recherche")
-                else:
-                    pass
-        
-        if len(employesTrouves) == 0:
-            erreur("Aucun résultat trouvé", "Recherche")
-        else:
-            update("recherche")
-    else:
-        erreur("Veuillez remplir tous les champs", "Recherche")
+      recherche = motcle.get()
+      typeSearch = typeRecherche.get()
 
+      # - Vérifier si la recherche doit être un nombre
+      if typeSearch == "Salaire" or typeSearch == "Heures":
+          
+         # - Vérifier si la recherche est un nombre
+          if sinombre(recherche) == True:
+                
+                # - Pour tous les employés, vérifier si la recherche correspond à un des employés
+                for i in employes:
+                   
+                   # - Si la recherche correspond à un des employés, ajouter l'employé à la liste des employés trouvés
+                   if float(recherche) == float(i[typeSearch.lower()]):
+                     employesTrouves.append(i)
+                     grouper("Recherche")
+                   # - Sinon, passer à l'employé suivant
+                   else:
+                     pass
+            # - Si la recherche n'est pas un nombre, afficher une erreur
+          else:
+            erreur("La recherche doit être un nombre", "Recherche")
 
+          # - Si aucun employé n'a été trouvé, afficher une erreur
+          if len(employesTrouves) == 0:
+               erreur("Aucun résultat trouvé", "Recherche")
+          else:
+               
+         # - Sinon, mettre à jour le tableau des résultats
+               update("recherche")
+
+      # - Si la recherche ne doit pas être un nombre
+      elif typeSearch == "Nom" or typeSearch == "Prenom" or typeSearch == "Poste":
+          
+          # - Pour tous les employés, vérifier si la recherche correspond à un des employés
+          for i in employes:
+             
+             # - Si la recherche correspond à un des employés, ajouter l'employé à la liste des employés trouvés
+             if recherche.lower() in i[typeSearch.lower()].lower():
+               employesTrouves.append(i)
+               grouper("Recherche")
+            # - Sinon, passer à l'employé suivant
+             else:
+               pass
+               
+         # - Si aucun employé n'a été trouvé, afficher une erreur
+          if len(employesTrouves) == 0:
+               erreur("Aucun résultat trouvé", "Recherche")
+          else:
+               
+            # - Sinon, mettre à jour le tableau des résultats
+               update("recherche")
+
+      # - Si les champs ne sont pas remplis, afficher une erreur
+      else:
+         erreur("Veuillez remplir tous les champs", "Recherche")
+
+# - Fenêtre de recherche
 def popupRecherche():
+   
+   # - Variables globales
    global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat, lblTxtNom, lblTxtPrenom, lblTxtPoste, lblTxtHeures, lblTxtSalaire, lblPagee
+
+   # - Créer la fenêtre de recherche
    recherche = tk.Toplevel()
    recherche.title("Rechercher")
    recherche.geometry("830x480")
    recherche['bg'] = '#ffffff'
 
+   # - Configurer la fenêtre de recherche
    recherche.rowconfigure(0, weight=1)
    recherche.rowconfigure(1, weight=1)
    recherche.rowconfigure(2, weight=1)
@@ -238,10 +293,12 @@ def popupRecherche():
    recherche.columnconfigure(2, weight=1)
    recherche.columnconfigure(3, weight=1)
 
+   # - Créer le cadre de recherche
    cadreRecherche = tk.Frame(recherche)
    cadreRecherche['bg'] = arriereplan1
    cadreRecherche.grid(row=0, column=0, columnspan=4, sticky='nsew')
 
+   # - Configurer le cadre de recherche
    cadreRecherche.rowconfigure(0, weight=1)
    cadreRecherche.rowconfigure(1, weight=1)
    cadreRecherche.rowconfigure(2, weight=1)
@@ -249,11 +306,13 @@ def popupRecherche():
    cadreRecherche.columnconfigure(1, weight=1)
    cadreRecherche.columnconfigure(2, weight=1)
 
+   # - Créer le cadre de résultat
    cadreResultat = tk.Frame(recherche)
    cadreResultat['bg'] = '#ffffff'
    cadreResultat.grid(row=1, column=0, columnspan=4, rowspan=3, sticky='nsew')
    cadreResultat.grid_propagate(0)
 
+   # - Rechercher
    lblRecherche = tk.Label(cadreRecherche)
    lblRecherche['text'] = "Rechercher"
    lblRecherche['bg'] = arriereplan1
@@ -261,6 +320,7 @@ def popupRecherche():
    lblRecherche['font'] = ('Calibri', '12', 'bold')
    lblRecherche.grid(row=0, column=0)
 
+   # - Type de recherche
    lblType = tk.Label(cadreRecherche)
    lblType['text'] = "Type de recherche"
    lblType['bg'] = arriereplan1
@@ -268,6 +328,7 @@ def popupRecherche():
    lblType['font'] = ('Calibri', '12', 'bold')
    lblType.grid(row=0, column=1)
 
+   # - Erreur
    lblErreur = tk.Label(cadreRecherche)
    lblErreur['text'] = ""
    lblErreur['bg'] = arriereplan1
@@ -275,6 +336,7 @@ def popupRecherche():
    lblErreur['font'] = ('Calibri', '12', 'bold')
    lblErreur.grid(row=0, column=3)
 
+   # - Champ de recherche
    motcle = tk.StringVar()
    entRecherche = tk.Entry(cadreRecherche)
    entRecherche['bg'] = boites
@@ -283,6 +345,7 @@ def popupRecherche():
    entRecherche['font'] = ('Calibri', '12')
    entRecherche.grid(row=1, column=0)
 
+   # - Type de recherche
    typeRecherche = tk.StringVar()
    typeRecherche.set("Nom")
    dropType = tk.OptionMenu(cadreRecherche, typeRecherche, *types)
@@ -291,6 +354,7 @@ def popupRecherche():
    dropType['font'] = ('Calibri', '12')
    dropType.grid(row=1, column=1)
 
+   # - Bouton rechercher
    btnRechercher = tk.Button(cadreRecherche)
    btnRechercher['text'] = "Rechercher"
    btnRechercher['bg'] = boites
@@ -299,6 +363,7 @@ def popupRecherche():
    btnRechercher['command'] = search
    btnRechercher.grid(row=1, column=2, pady=20)
 
+   # - Titre du tableau
    lblTxtNom = tk.Label(cadreResultat)
    lblTxtNom['text'] = 'Nom'
    lblTxtNom['bg'] = arriereplan2
@@ -310,6 +375,7 @@ def popupRecherche():
    lblTxtNom['font'] = ('Calibri', '12', 'bold')
    lblTxtNom.grid(row=0, column=0)
 
+   # - Titre du tableau
    lblTxtPrenom = tk.Label(cadreResultat)
    lblTxtPrenom['text'] = 'Prénom'
    lblTxtPrenom['bg'] = arriereplan2
@@ -321,6 +387,7 @@ def popupRecherche():
    lblTxtPrenom['font'] = ('Calibri', '12', 'bold')
    lblTxtPrenom.grid(row=0, column=1)
 
+   # - Titre du tableau
    lblTxtPoste = tk.Label(cadreResultat)
    lblTxtPoste['text'] = 'Poste'
    lblTxtPoste['bg'] = arriereplan2
@@ -332,6 +399,7 @@ def popupRecherche():
    lblTxtPoste['font'] = ('Calibri', '12', 'bold')
    lblTxtPoste.grid(row=0, column=2)
 
+   # - Titre du tableau
    lblTxtHeures = tk.Label(cadreResultat)
    lblTxtHeures['text'] = 'Heures'
    lblTxtHeures['bg'] = arriereplan2
@@ -343,6 +411,7 @@ def popupRecherche():
    lblTxtHeures['font'] = ('Calibri', '12', 'bold')
    lblTxtHeures.grid(row=0, column=3)
 
+   # - Titre du tableau
    lblTxtSalaire = tk.Label(cadreResultat)
    lblTxtSalaire['text'] = 'Salaire'
    lblTxtSalaire['bg'] = arriereplan2
@@ -374,6 +443,7 @@ def popupRecherche():
    btnPrecedent['command'] = precedentRecherche
    btnPrecedent.grid(row=5, column=0, sticky='w')
 
+   # - Page
    lblPagee = tk.Label(recherche)
    lblPagee['text'] = 'Page {} sur {}'.format(1,1)
    lblPagee['bg'] = '#ffffff'
@@ -381,13 +451,19 @@ def popupRecherche():
    lblPagee['font'] = ('Calibri', '12', 'bold')
    lblPagee.grid(row=5, column=1, columnspan=2)
 
+# - Feneêtre de configuration
 def config():
+   
+   # - Variables globales
    global impotretenu, heurespourbonis, tauxbonis, cadreConfiguration
+
+   # - Création de la fenêtre de configuration
    cadreConfiguration = tk.Toplevel()
    cadreConfiguration['bg'] = arriereplan1
    cadreConfiguration.title("Configuration")
    cadreConfiguration.geometry("500x380")
 
+   # - Titre de la fenêtre
    lblConfiguration = tk.Label(cadreConfiguration)
    lblConfiguration['text'] = "Configuration des variables \n (Valeurs décimales avec un point (ex: 0.5))"
    lblConfiguration['bg'] = arriereplan1
@@ -395,6 +471,7 @@ def config():
    lblConfiguration['font'] = ('Calibri', '12', 'bold')
    lblConfiguration.grid(row=0, column=0, columnspan=2, pady=20, padx=90)
 
+   # - Impôt retenu
    lblimpotretenu = tk.Label(cadreConfiguration)
    lblimpotretenu['text'] = "Impôt retenu"
    lblimpotretenu['bg'] = arriereplan1
@@ -402,6 +479,7 @@ def config():
    lblimpotretenu['font'] = ('Calibri', '12')
    lblimpotretenu.grid(row=1, column=0, pady=20)
 
+   # - Entrée de l'impôt retenu
    impotretenu = tk.StringVar()
    entlblimpotretenu = tk.Entry(cadreConfiguration)
    entlblimpotretenu['bg'] = boites
@@ -410,6 +488,7 @@ def config():
    entlblimpotretenu['font'] = ('Calibri', '12')
    entlblimpotretenu.grid(row=1, column=1, pady=20)
 
+   # - Heures pour bonis
    lblheurespourbonis = tk.Label(cadreConfiguration)
    lblheurespourbonis['text'] = "Heures pour bonis"
    lblheurespourbonis['bg'] = arriereplan1
@@ -417,6 +496,7 @@ def config():
    lblheurespourbonis['font'] = ('Calibri', '12')
    lblheurespourbonis.grid(row=2, column=0, pady=20)
 
+   # - Entrée des heures pour bonis
    heurespourbonis = tk.StringVar()
    entlblheurespourbonis = tk.Entry(cadreConfiguration)
    entlblheurespourbonis['bg'] = boites
@@ -425,6 +505,7 @@ def config():
    entlblheurespourbonis['font'] = ('Calibri', '12')
    entlblheurespourbonis.grid(row=2, column=1, pady=20)
 
+   # - Taux de bonis
    lbltauxbonis = tk.Label(cadreConfiguration)
    lbltauxbonis['text'] = "Taux de bonis"
    lbltauxbonis['bg'] = arriereplan1
@@ -432,6 +513,7 @@ def config():
    lbltauxbonis['font'] = ('Calibri', '12')
    lbltauxbonis.grid(row=3, column=0, pady=20)
 
+   # - Entrée du taux de bonis
    tauxbonis = tk.StringVar()
    entlbltauxbonis = tk.Entry(cadreConfiguration)
    entlbltauxbonis['bg'] = boites
@@ -440,6 +522,7 @@ def config():
    entlbltauxbonis['font'] = ('Calibri', '12')
    entlbltauxbonis.grid(row=3, column=1, pady=20)  
 
+   # - Bouton soumettre
    btnSoumettre = tk.Button(cadreConfiguration)
    btnSoumettre['text'] = "Soumettre"
    btnSoumettre['bg'] = boites
@@ -448,13 +531,17 @@ def config():
    btnSoumettre['command'] = soumettre
    btnSoumettre.grid(row=4, column=0, columnspan=2, pady=20)
    
-
+# - Soumettre les variables pour la configuration
 def soumettre():
+
+   # - Variables globales
    global heures_pour_bonis, impot_retenu, bonis, impotretenu, heurespourbonis, tauxbonis
 
+   # - Verifier si les entrées sont remplies
    if impotretenu.get() == "" or heurespourbonis.get() == "" or tauxbonis.get() == "":
       erreur("Remplir toutes les cases ou quitter pour ne pas changer les variables", "Configuration")
    else:
+      # - Vérifier si les entrées sont des nombres
       if sinombre(impotretenu.get()) == False:
          erreur("L'impôt retenu doit être un nombre", "Configuration")
       elif sinombre(heurespourbonis.get()) == False:
@@ -463,21 +550,28 @@ def soumettre():
          erreur("Le taux de bonis doit être un nombre", "Configuration")
       else:
          try:
+            # - Détruire le message d'erreur
             lblErreur.destroy()
          except:
             pass
+         # - Assigner les nouvelles variables
          impot_retenu = float(impotretenu.get())
          heures_pour_bonis = float(heurespourbonis.get())
          bonis = float(tauxbonis.get())
+         # - Détruire la fenêtre
          cadreConfiguration.destroy()
 
+# - Cadre pour les emplois
 def emplois():
+
+   # - Variables globales
    global nomemploi, tauxemploi, emplois
    emplois = tk.Toplevel()
    emplois['bg'] = arriereplan1
    emplois.title("Emplois")
    emplois.geometry("500x380")
 
+   # - Titre
    lblEmplois = tk.Label(emplois)
    lblEmplois['text'] = "Configuration des emplois/postes"
    lblEmplois['bg'] = arriereplan1
@@ -485,6 +579,7 @@ def emplois():
    lblEmplois['font'] = ('Calibri', '12', 'bold')
    lblEmplois.grid(row=0, column=0, columnspan=2, pady=20, padx=130)
 
+   # - Nom de l'emploi
    lblNom = tk.Label(emplois)
    lblNom['text'] = "Nom"
    lblNom['bg'] = arriereplan1
@@ -492,6 +587,7 @@ def emplois():
    lblNom['font'] = ('Calibri', '12')
    lblNom.grid(row=1, column=0, pady=20)
 
+   # - Entrée du nom de l'emploi
    nomemploi = tk.StringVar()
    entlblNom = tk.Entry(emplois)
    entlblNom['bg'] = boites
@@ -500,6 +596,7 @@ def emplois():
    entlblNom['font'] = ('Calibri', '12')
    entlblNom.grid(row=1, column=1, pady=20)
 
+   # - Taux de l'emploi
    lblTaux = tk.Label(emplois)
    lblTaux['text'] = "Taux ($/h)"
    lblTaux['bg'] = arriereplan1
@@ -507,6 +604,7 @@ def emplois():
    lblTaux['font'] = ('Calibri', '12')
    lblTaux.grid(row=2, column=0, pady=20)
 
+   # - Entrée du taux de l'emploi
    tauxemploi = tk.StringVar()
    entlblTaux = tk.Entry(emplois)
    entlblTaux['bg'] = boites
@@ -515,6 +613,7 @@ def emplois():
    entlblTaux['font'] = ('Calibri', '12')
    entlblTaux.grid(row=2, column=1, pady=20)
 
+   # - Bouton soumettre
    btnSoumettre = tk.Button(emplois)
    btnSoumettre['text'] = "Ajouter"
    btnSoumettre['bg'] = boites
@@ -524,21 +623,30 @@ def emplois():
    btnSoumettre.grid(row=3, column=0, columnspan=2, pady=20)
 
 def soumettreEmplois():
+
+   # - Variables globales
    global nomemploi, tauxemploi, emplois, lblErreur, dropPoste, poste
 
+   # - Vérifier si les entrées sont remplies
    if nomemploi.get() == "" or tauxemploi.get() == "":
       erreur("Remplir toutes les cases ou quitter pour ne pas ajouter des postes", "Preferences")
    else:
+      # - Vérifier si les entrées sont des nombres
       if sinombre(tauxemploi.get()) == False:
          erreur("Le taux d'emploi doit être un nombre", "Preferences")
       else:
          try:
+            # - Détruire le message d'erreur
             lblErreur.destroy()
          except:
             pass
+         # - Ajouter le poste
          postesoptions['{}'.format(nomemploi.get())] = float(tauxemploi.get())
+
+         # - Détruire le menu déroulant
          dropPoste.destroy()
 
+         # - Recréer le menu déroulant
          poste = tk.StringVar()
          poste.set("Poste")
          dropPoste = tk.OptionMenu(cadreEmployersEntry, poste, *postesoptions)
@@ -547,20 +655,23 @@ def soumettreEmplois():
          dropPoste['font'] = ('Calibri', '12')
          dropPoste.grid(row=1, column=2)
 
-
-   
+# - Vérifier si x est un nombre
 def sinombre(x):
    try:
+      # - Si oui, retourner True
       float(x)
       return True
+   # - Si non, retourner False
    except ValueError:
       return False
 
-
-
+# - Message d'erreur
 def erreur(message, endroit):
+
+   # - Variables globales
    global lblErreur
 
+   # - Vérifier si le message d'erreur est pour EmployersEntry
    if endroit == "EmployersEntry":
       lblErreur = tk.Label(cadreEmployersEntry)
       lblErreur['text'] = message
@@ -568,6 +679,8 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=3, column=0, columnspan=4, sticky='nsew')
+
+   # - Vérifier si le message d'erreur est pour la fenêtre Recherche
    elif endroit == "Recherche":
       lblErreur = tk.Label(cadreRecherche)
       lblErreur['text'] = message
@@ -575,6 +688,8 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=2, column=0, columnspan=3, sticky='nsew')
+
+   # - Vérifier si le message d'erreur est pour la fenêtre Configuration
    elif endroit == "Configuration":
       lblErreur = tk.Label(cadreConfiguration)
       lblErreur['text'] = message
@@ -582,6 +697,8 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=5, column=0, columnspan=3, sticky='nsew')
+
+   # - Vérifier si le message d'erreur est pour la fenêtre Preferences
    elif endroit == "Preferences":
       lblErreur = tk.Label(emplois)
       lblErreur['text'] = message
@@ -589,17 +706,24 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=5, column=0, columnspan=2, sticky='nsew')
+   
+   # - Si endroit n'est pas un endroit valide, passer
    else:
       pass
 
+# - Fenetre
 def cadre():
+
+   # - Variables globales
    global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers, imgFlecheDroite, imgFlecheGauche, dropPoste
+   
    # - Fenetre
    fenetre = tk.Tk()
    fenetre.title("Comptabilité")
    fenetre.geometry("830x740")
    fenetre['bg'] = '#ffffff'
 
+   # - Configuration de la fenetre
    fenetre.columnconfigure(0, weight=1)
    fenetre.columnconfigure(1, weight=1)
    fenetre.columnconfigure(2, weight=1)
@@ -614,12 +738,13 @@ def cadre():
    mnuBarreMenu = tk.Menu(fenetre)
    fenetre['menu'] = mnuBarreMenu
 
+   # - Menu Fichier
    mnuFichier = tk.Menu(mnuBarreMenu, tearoff=0)
    mnuBarreMenu.add_cascade(label="Fichier", menu=mnuFichier)
    mnuFichier.add_command(label="Quitter", command=fenetre.destroy)
 
+   # - Menu Options
    mnuOptions = tk.Menu(mnuBarreMenu, tearoff=0)
-
    mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
    mnuOptions.add_command(label="Configuration", command=config)
    mnuOptions.add_command(label="Emplois", command=emplois)
@@ -630,19 +755,24 @@ def cadre():
    imgLoupe = tk.PhotoImage(file="loupe.gif")
 
    # - Cadres
+
+   # - Cadre Employers
    cadreEmployers = tk.Frame(fenetre)
    cadreEmployers['bg'] = '#ffffff'
    cadreEmployers.grid(row=1, column=0, rowspan=4, columnspan=4, sticky='nsew')
+
+   # - Éviter que le cadre Employers change de taille
    cadreEmployers.grid_propagate(0)
 
+   # - Cadre EmployersEntry
    cadreEmployersEntry = tk.Frame(fenetre)
    cadreEmployersEntry['bg'] = arriereplan1
    cadreEmployersEntry.grid(row=0, column=0, rowspan=1, columnspan=4, sticky='nsew')
 
-   # - Bind
+   # - Bouton sur clavier pour ajouter un employer
    fenetre.bind("<Return>", lambda x: ajouter())
 
-   # - Cadre EmployersEntry
+   # - Cadre EmployersEntry configuration
    cadreEmployersEntry.columnconfigure(0, weight=1)
    cadreEmployersEntry.columnconfigure(1, weight=1)
    cadreEmployersEntry.columnconfigure(2, weight=1)
@@ -651,6 +781,7 @@ def cadre():
    cadreEmployersEntry.rowconfigure(1, weight=1)
    cadreEmployersEntry.rowconfigure(2, weight=1)
 
+   # - Nom
    lblNom = tk.Label(cadreEmployersEntry)
    lblNom['text'] = 'Nom'
    lblNom['bg'] = arriereplan1
@@ -658,6 +789,7 @@ def cadre():
    lblNom['font'] = ('Calibri', '12', 'bold')
    lblNom.grid(row=0, column=0)
 
+   # - Prenom
    lblPrenom = tk.Label(cadreEmployersEntry)
    lblPrenom['text'] = 'Prénom'
    lblPrenom['bg'] = arriereplan1
@@ -665,6 +797,7 @@ def cadre():
    lblPrenom['font'] = ('Calibri', '12', 'bold')
    lblPrenom.grid(row=0, column=1)
 
+   # - Poste
    lblPoste = tk.Label(cadreEmployersEntry)
    lblPoste['text'] = 'Poste'
    lblPoste['bg'] = arriereplan1
@@ -672,6 +805,7 @@ def cadre():
    lblPoste['font'] = ('Calibri', '12', 'bold')
    lblPoste.grid(row=0, column=2)
 
+   # - Heures
    lblHeures = tk.Label(cadreEmployersEntry)
    lblHeures['text'] = 'Heures'
    lblHeures['bg'] = arriereplan1
@@ -679,6 +813,7 @@ def cadre():
    lblHeures['font'] = ('Calibri', '12', 'bold')
    lblHeures.grid(row=0, column=3)
 
+   # - Entrée nom
    nom = tk.StringVar()
    entNom = tk.Entry(cadreEmployersEntry)
    entNom['bg'] = boites
@@ -687,6 +822,7 @@ def cadre():
    entNom['textvariable'] = nom
    entNom.grid(row=1, column=0)
 
+   # - Entrée prénom
    prenom = tk.StringVar()
    entPrenom = tk.Entry(cadreEmployersEntry)
    entPrenom['bg'] = boites
@@ -695,6 +831,7 @@ def cadre():
    entPrenom['textvariable'] = prenom
    entPrenom.grid(row=1, column=1)
 
+   # - Entrée poste
    poste = tk.StringVar()
    poste.set("Poste")
    dropPoste = tk.OptionMenu(cadreEmployersEntry, poste, *postesoptions)
@@ -703,6 +840,7 @@ def cadre():
    dropPoste['font'] = ('Calibri', '12')
    dropPoste.grid(row=1, column=2)
 
+   # - Entrée heures
    heures = tk.StringVar()
    entHeures = tk.Entry(cadreEmployersEntry)
    entHeures['bg'] = boites
@@ -711,6 +849,7 @@ def cadre():
    entHeures['textvariable'] = heures
    entHeures.grid(row=1, column=3)
 
+   # - Bouton ajouter
    btnAjouter = tk.Button(cadreEmployersEntry)
    btnAjouter['text'] = 'Ajouter'
    btnAjouter['bg'] = boites
@@ -718,6 +857,18 @@ def cadre():
    btnAjouter['font'] = ('Calibri', '12', 'bold')
    btnAjouter['command'] = ajouter
    btnAjouter.grid(row=2, column=1)
+
+   # - Bouton pour rechercher
+   btnRechercher = tk.Button(cadreEmployersEntry)
+   btnRechercher['image'] = imgLoupe
+   btnRechercher['relief'] = 'flat'
+   btnRechercher['bg'] = '#ffffff'
+   btnRechercher['fg'] = '#000000'
+   btnRechercher['font'] = ('Calibri', '12', 'bold')
+   btnRechercher['command'] = popupRecherche
+   btnRechercher.grid(row=2, column=2)
+
+   # - Pages
 
    # - Porchain page
    btnProchain = tk.Button(fenetre)
@@ -739,6 +890,7 @@ def cadre():
    btnPrecedent['command'] = precedent
    btnPrecedent.grid(row=5, column=0, sticky='w')
 
+   # - Page
    lblPage = tk.Label(fenetre)
    lblPage['text'] = 'Page {} sur {}'.format(1,1)
    lblPage['bg'] = '#ffffff'
@@ -746,8 +898,9 @@ def cadre():
    lblPage['font'] = ('Calibri', '12', 'bold')
    lblPage.grid(row=5, column=1, columnspan=2)
 
-
    # - Cadre Employers
+
+   # - Nom
    lblTxttNom = tk.Label(cadreEmployers)
    lblTxttNom['text'] = 'Nom'
    lblTxttNom['bg'] = arriereplan2
@@ -759,6 +912,7 @@ def cadre():
    lblTxttNom['font'] = ('Calibri', '12', 'bold')
    lblTxttNom.grid(row=0, column=0)
 
+   # - Prénom
    lblTxttPrenom = tk.Label(cadreEmployers)
    lblTxttPrenom['text'] = 'Prénom'
    lblTxttPrenom['bg'] = arriereplan2
@@ -770,6 +924,7 @@ def cadre():
    lblTxttPrenom['font'] = ('Calibri', '12', 'bold')
    lblTxttPrenom.grid(row=0, column=1)
 
+   # - Poste
    lblTxttPoste = tk.Label(cadreEmployers)
    lblTxttPoste['text'] = 'Poste'
    lblTxttPoste['bg'] = arriereplan2
@@ -781,6 +936,7 @@ def cadre():
    lblTxttPoste['font'] = ('Calibri', '12', 'bold')
    lblTxttPoste.grid(row=0, column=2)
 
+   # - Heures
    lblTxttHeures = tk.Label(cadreEmployers)
    lblTxttHeures['text'] = 'Heures'
    lblTxttHeures['bg'] = arriereplan2
@@ -792,6 +948,7 @@ def cadre():
    lblTxttHeures['font'] = ('Calibri', '12', 'bold')
    lblTxttHeures.grid(row=0, column=3)
 
+   # - Salaire
    lblTxttSalaire = tk.Label(cadreEmployers)
    lblTxttSalaire['text'] = 'Salaire'
    lblTxttSalaire['bg'] = arriereplan2
@@ -803,24 +960,21 @@ def cadre():
    lblTxttSalaire['font'] = ('Calibri', '12', 'bold')
    lblTxttSalaire.grid(row=0, column=4)
 
-   btnRechercher = tk.Button(cadreEmployersEntry)
-   btnRechercher['image'] = imgLoupe
-   btnRechercher['relief'] = 'flat'
-   btnRechercher['bg'] = '#ffffff'
-   btnRechercher['fg'] = '#000000'
-   btnRechercher['font'] = ('Calibri', '12', 'bold')
-   btnRechercher['command'] = popupRecherche
-   btnRechercher.grid(row=2, column=2)
-
+   # - Montrer les instructions au début
    instructions()
 
+   # - Afficher la fenêtre
    fenetre.mainloop()
 
+# - Instructions
 def instructions():
+
+   # - Cadre Instructions
    cadreInstructions = tk.Frame(fenetre)
    cadreInstructions['bg'] = arriereplan1
    cadreInstructions.grid(row=0, column=0, rowspan=6, columnspan=4, sticky='nsew')
 
+   # - Instructions titre
    lblInstructions = tk.Label(cadreInstructions)
    lblInstructions['text'] = 'Instructions'
    lblInstructions['bg'] = arriereplan1
@@ -828,6 +982,7 @@ def instructions():
    lblInstructions['font'] = ('Calibri', '20', 'bold')
    lblInstructions.grid(row=0, column=0, sticky='nsew', pady = 30, padx=340)
 
+   # - Instructions
    lblComment = tk.Label(cadreInstructions)
    lblComment['text'] = 'Bienvenue à un programme de comptabilité pour restaurants. Ce programme est capable de calculer le salaire de \nchaque employé, ainsi que le bonis qui doit y être ajouté, selon le nombre d\'heures travaillées et quel poste l\'employé a.\n Par défaut le programme calcule le salaire avec un import retenu sur le salaire de {} %, {} heures de travail \npour reçevoir un bonis de {} % sur le salaire. \n(Ces options peuvent être configurés dans le programme via le menu de configuration).\n\n Les options d\'emplois peuvent être configurées via le menu d\'emplois. '.format(impot_retenu*100, heures_pour_bonis, bonis)
    lblComment['bg'] = arriereplan1
@@ -835,6 +990,7 @@ def instructions():
    lblComment['font'] = ('Calibri', '12')
    lblComment.grid(row=1, column=0, sticky='nsew', pady = 20)
 
+   # - Bouton pour fermer le cadre
    btnFermer = tk.Button(cadreInstructions)
    btnFermer['text'] = 'Continuer'
    btnFermer['bg'] = '#ffffff'
@@ -843,25 +999,32 @@ def instructions():
    btnFermer['command'] = cadreInstructions.destroy
    btnFermer.grid(row=2, column=0, pady=20)
 
-   
-
-
-
 # - Fonctions pour cadre
-def update(x):
-   global employes, rows, groupes, page_courant, employesTrouves, cadreRecherche, cadreResultat, page_courant_recherche, groupesrecherche
 
+# - Montrer les résultats
+def update(x):
+
+   # - Variables globales
+   global employes, groupes, page_courant, employesTrouves, cadreRecherche, cadreResultat, page_courant_recherche, groupesrecherche
+
+   # - Si x est égal à "recherche", alors on affiche les résultats de la recherche
    if x == "recherche": 
+
+      # - Détruire les anciens résultats
       for i in cadreResultat.winfo_children():
          if i != lblTxtNom and i != lblTxtPrenom and i != lblTxtPoste and i != lblTxtHeures and i != lblTxtSalaire: 
             i.destroy()
          else:
             pass
 
+      # - Afficher la page courante
       updatePage("Recherche")
 
+      # - Afficher les résultats pour chaque employé trouvé
       groupe_courant = groupesrecherche[page_courant_recherche-1]
       for i, trouve in enumerate(groupe_courant):
+
+         # - Nom
          lblPersonne = tk.Label(cadreResultat)
          lblPersonne['text'] = trouve["nom"]
          lblPersonne['bg'] = '#ffffff'
@@ -872,6 +1035,7 @@ def update(x):
          lblPersonne['font'] = ('Calibri', '12')
          lblPersonne.grid(row=i+1, column=0)
 
+         # - Prénom
          lblPrenom = tk.Label(cadreResultat)
          lblPrenom['text'] = trouve["prenom"]
          lblPrenom['bg'] = '#ffffff'
@@ -882,6 +1046,7 @@ def update(x):
          lblPrenom['font'] = ('Calibri', '12')
          lblPrenom.grid(row=i+1, column=1)
 
+         # - Poste
          lblPoste = tk.Label(cadreResultat)
          lblPoste['text'] = trouve["poste"]
          lblPoste['bg'] = '#ffffff'
@@ -892,6 +1057,7 @@ def update(x):
          lblPoste['font'] = ('Calibri', '12')
          lblPoste.grid(row=i+1, column=2)
 
+         # - Heures
          lblHeures = tk.Label(cadreResultat)
          lblHeures['text'] = trouve["heures"]
          lblHeures['bg'] = '#ffffff'
@@ -902,6 +1068,7 @@ def update(x):
          lblHeures['font'] = ('Calibri', '12')
          lblHeures.grid(row=i+1, column=3)
 
+         # - Salaire
          lblSalaire = tk.Label(cadreResultat)
          lblSalaire['text'] = "$ {:.2f}".format(trouve["salaire"])
          lblSalaire['bg'] = '#ffffff'
@@ -911,17 +1078,25 @@ def update(x):
          lblSalaire['height'] = 2
          lblSalaire['font'] = ('Calibri', '12')
          lblSalaire.grid(row=i+1, column=4)
+
+   # - Sinon, on affiche les résultats normaux dans le cadre Employers
    else:
+
+      # - Détruire les anciens résultats
       for i in cadreEmployers.winfo_children():
          if i != lblTxttNom and i != lblTxttPrenom and i != lblTxttPoste and i != lblTxttHeures and i != lblTxttSalaire:
             i.destroy()
          else:
             pass
-            
+      
+      # - Afficher la page courante
       updatePage("Ajout")
 
+      # - Afficher les résultats pour chaque employé
       groupe_courant = groupes[page_courant-1]
       for i, employe in enumerate(groupe_courant):
+
+         # - Nom
          lblPersonne = tk.Label(cadreEmployers)
          lblPersonne['text'] = employe["nom"]
          lblPersonne['bg'] = '#ffffff'
@@ -932,6 +1107,7 @@ def update(x):
          lblPersonne['font'] = ('Calibri', '12')
          lblPersonne.grid(row=i+1, column=0)
 
+         # - Prénom
          lblPrenom = tk.Label(cadreEmployers)
          lblPrenom['text'] = employe["prenom"]
          lblPrenom['bg'] = '#ffffff'
@@ -942,6 +1118,7 @@ def update(x):
          lblPrenom['font'] = ('Calibri', '12')
          lblPrenom.grid(row=i+1, column=1)
 
+         # - Poste
          lblPoste = tk.Label(cadreEmployers)
          lblPoste['text'] = employe["poste"]
          lblPoste['bg'] = '#ffffff'
@@ -952,6 +1129,7 @@ def update(x):
          lblPoste['font'] = ('Calibri', '12')
          lblPoste.grid(row=i+1, column=2)
 
+         # - Heures
          lblHeures = tk.Label(cadreEmployers)
          lblHeures['text'] = employe["heures"]
          lblHeures['bg'] = '#ffffff'
@@ -962,6 +1140,7 @@ def update(x):
          lblHeures['font'] = ('Calibri', '12')
          lblHeures.grid(row=i+1, column=3)
 
+         # - Salaire
          lblSalaire = tk.Label(cadreEmployers)
          lblSalaire['text'] = "$ {:.2f}".format(employe["salaire"])
          lblSalaire['bg'] = '#ffffff'
@@ -972,4 +1151,6 @@ def update(x):
          lblSalaire['font'] = ('Calibri', '12')
          lblSalaire.grid(row=i+1, column=4)
 
+
+# - Commencer le programme en affichant la feneêtre principale avec la page d'accueil
 cadre()
