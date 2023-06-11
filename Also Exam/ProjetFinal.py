@@ -436,7 +436,6 @@ def popupRecherche():
    btnProchain['relief'] = 'flat'
    btnProchain['bg'] = '#ffffff'
    btnProchain['fg'] = '#000000'
-   btnProchain['font'] = ('Calibri', '12', 'bold')
    btnProchain['command'] = prochainRecherche
    btnProchain.grid(row=5, column=3, sticky='e')
 
@@ -446,7 +445,6 @@ def popupRecherche():
    btnPrecedent['relief'] = 'flat'
    btnPrecedent['bg'] = '#ffffff'
    btnPrecedent['fg'] = '#000000'
-   btnPrecedent['font'] = ('Calibri', '12', 'bold')
    btnPrecedent['command'] = precedentRecherche
    btnPrecedent.grid(row=5, column=0, sticky='w')
 
@@ -883,7 +881,6 @@ def cadre():
    btnProchain['relief'] = 'flat'
    btnProchain['bg'] = '#ffffff'
    btnProchain['fg'] = '#000000'
-   btnProchain['font'] = ('Calibri', '12', 'bold')
    btnProchain['command'] = prochain
    btnProchain.grid(row=5, column=3, sticky='e')
 
@@ -893,7 +890,6 @@ def cadre():
    btnPrecedent['relief'] = 'flat'
    btnPrecedent['bg'] = '#ffffff'
    btnPrecedent['fg'] = '#000000'
-   btnPrecedent['font'] = ('Calibri', '12', 'bold')
    btnPrecedent['command'] = precedent
    btnPrecedent.grid(row=5, column=0, sticky='w')
 
