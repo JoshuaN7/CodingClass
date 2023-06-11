@@ -31,10 +31,14 @@ import tkinter as tk
 # - Variables
 TEST = True
 rows = 0
+rowsrecherche = 0
 entreesParPage = 10
+entreesParPageRecherche = 5
 page_courant = 1
+page_courant_recherche = 1
 employes = []
 groupes = []
+groupesrecherche = []
 postesoptions = {
    'Cuisinier' : 19.00,
    'Serveur' : 15.50,
@@ -96,7 +100,7 @@ def ajouter():
             # - Ajouter à la liste des employés
             employes.append(employe)
             # - Séparer les employés en groupes selon le nombre d'entrées par page
-            grouper()
+            grouper("Ajout")
             # - Si TEST est True, ne pas effacer les entrées pour faciliter les entrées lors du testing
             if TEST == True:
                pass
@@ -116,27 +120,46 @@ def clear():
    entHeures.delete(0, tk.END)
 
 # - Séparer les employés en groupes selon le nombre d'entrées par page
-def grouper():
+def grouper(x):
    # - Variables globales
-   global entreesParPage, employes, groupes
-   # - Effacer la liste des groupes pour faire la mise a jour du tableau de groupes
-   groupes.clear()
-   nombreEmployes = len(employes)
-   nombreGroupes = nombreEmployes // entreesParPage + (nombreEmployes % entreesParPage > 0)
+   global entreesParPage, employes, groupes, groupesrecherche, entreesParPageRecherche, employesTrouves
 
-   # - Séparer les employés en groupes selon le nombre d'entrées par page
-   for i in range(nombreGroupes):
-      debut = i * entreesParPage
-      fin = (i+1) * entreesParPage
-      groupe = employes[debut:fin]
-      groupes.append(groupe)
+   if x == "Recherche":
+      groupesrecherche.clear()
+      nombreEmployes = len(employesTrouves)
+      nombreGroupes = nombreEmployes // entreesParPageRecherche + (nombreEmployes % entreesParPageRecherche > 0)
 
-   # - Mettre à jour le tableau de groupes
-   update("Ajout")
+      # - Séparer les employés en groupes selon le nombre d'entrées par page
+      for i in range(nombreGroupes):
+         debut = i * entreesParPageRecherche
+         fin = (i+1) * entreesParPageRecherche
+         groupe = employesTrouves[debut:fin]
+         groupesrecherche.append(groupe)
 
-def updatePage():
-      global page_courant, groupes
-      lblPage['text'] = "Page {} sur {}".format(page_courant, len(groupes))
+      # - Mettre à jour le tableau de groupes
+      update("recherche")
+   else:
+      # - Effacer la liste des groupes pour faire la mise a jour du tableau de groupes
+      groupes.clear()
+      nombreEmployes = len(employes)
+      nombreGroupes = nombreEmployes // entreesParPage + (nombreEmployes % entreesParPage > 0)
+
+      # - Séparer les employés en groupes selon le nombre d'entrées par page
+      for i in range(nombreGroupes):
+         debut = i * entreesParPage
+         fin = (i+1) * entreesParPage
+         groupe = employes[debut:fin]
+         groupes.append(groupe)
+
+      # - Mettre à jour le tableau de groupes
+      update("Ajout")
+
+def updatePage(x):
+      global page_courant, groupes, groupesrecherche, page_courant_recherche
+      if x == "Recherche":
+         lblPagee['text'] = "Page {} sur {}".format(page_courant_recherche, len(groupesrecherche))
+      else:
+         lblPage['text'] = "Page {} sur {}".format(page_courant, len(groupes))
 
 def prochain():
    global page_courant, groupes
@@ -151,8 +174,21 @@ def precedent():
       page_courant -= 1
       update("Ajout")
 
+def prochainRecherche():
+   global page_courant_recherche, groupesrecherche
+   nombreGroupes = len(groupesrecherche)
+   if page_courant_recherche < nombreGroupes:
+      page_courant_recherche += 1
+      update("recherche")
+
+def precedentRecherche():
+   global page_courant_recherche, groupesrecherche
+   if page_courant_recherche > 1:
+      page_courant_recherche -= 1
+      update("recherche")
+
 def search():
-    global typeRecherche, motcle, employesTrouves, lblErreur
+    global typeRecherche, motcle, employesTrouves, lblErreur, rowsrecherche
     try: 
         lblErreur.destroy()
     except:
@@ -165,12 +201,14 @@ def search():
             for i in employes:
                 if float(recherche) == float(i[typeSearch.lower()]):
                     employesTrouves.append(i)
+                    grouper("Recherche")
                 else:
                     pass
         else:
             for i in employes:
                 if recherche.lower() in str(i[typeSearch.lower()]).lower():
                     employesTrouves.append(i)
+                    grouper("Recherche")
                 else:
                     pass
         
@@ -183,22 +221,43 @@ def search():
 
 
 def popupRecherche():
-   global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat, lblTxtNom, lblTxtPrenom, lblTxtPoste, lblTxtHeures, lblTxtSalaire
-   cadreRecherche = tk.Toplevel()
-   cadreRecherche.title("Rechercher")
-   cadreRecherche.geometry("830x500")
-   cadreRecherche['bg'] = arriereplan1
+   global typeRecherche, motcle, recherche, lblErreur, cadreRecherche, cadreResultat, lblTxtNom, lblTxtPrenom, lblTxtPoste, lblTxtHeures, lblTxtSalaire, lblPagee
+   recherche = tk.Toplevel()
+   recherche.title("Rechercher")
+   recherche.geometry("830x480")
+   recherche['bg'] = '#ffffff'
 
-   cadreResultat = tk.Frame(cadreRecherche)
+   recherche.rowconfigure(0, weight=1)
+   recherche.rowconfigure(1, weight=1)
+   recherche.rowconfigure(2, weight=1)
+   recherche.rowconfigure(3, weight=1)
+   recherche.columnconfigure(0, weight=1)
+   recherche.columnconfigure(1, weight=1)
+   recherche.columnconfigure(2, weight=1)
+   recherche.columnconfigure(3, weight=1)
+
+   cadreRecherche = tk.Frame(recherche)
+   cadreRecherche['bg'] = arriereplan1
+   cadreRecherche.grid(row=0, column=0, columnspan=4, sticky='nsew')
+
+   cadreRecherche.rowconfigure(0, weight=1)
+   cadreRecherche.rowconfigure(1, weight=1)
+   cadreRecherche.rowconfigure(2, weight=1)
+   cadreRecherche.columnconfigure(0, weight=1)
+   cadreRecherche.columnconfigure(1, weight=1)
+   cadreRecherche.columnconfigure(2, weight=1)
+
+   cadreResultat = tk.Frame(recherche)
    cadreResultat['bg'] = '#ffffff'
-   cadreResultat.grid(row = 3, column=0, columnspan=4, sticky='nsew')
+   cadreResultat.grid(row=1, column=0, columnspan=4, rowspan=3, sticky='nsew')
+   cadreResultat.grid_propagate(0)
 
    lblRecherche = tk.Label(cadreRecherche)
    lblRecherche['text'] = "Rechercher"
    lblRecherche['bg'] = arriereplan1
    lblRecherche['fg'] = '#000000'
    lblRecherche['font'] = ('Calibri', '12', 'bold')
-   lblRecherche.grid(row=0, column=0, pady=5)
+   lblRecherche.grid(row=0, column=0)
 
    lblType = tk.Label(cadreRecherche)
    lblType['text'] = "Type de recherche"
@@ -246,7 +305,7 @@ def popupRecherche():
    lblTxtNom['height'] = 2
    lblTxtNom['borderwidth'] = 2
    lblTxtNom['relief'] = 'groove'
-   lblTxtNom['font'] = ('Calibri', '12')
+   lblTxtNom['font'] = ('Calibri', '12', 'bold')
    lblTxtNom.grid(row=0, column=0)
 
    lblTxtPrenom = tk.Label(cadreResultat)
@@ -257,7 +316,7 @@ def popupRecherche():
    lblTxtPrenom['height'] = 2
    lblTxtPrenom['borderwidth'] = 2
    lblTxtPrenom['relief'] = 'groove'
-   lblTxtPrenom['font'] = ('Calibri', '12')
+   lblTxtPrenom['font'] = ('Calibri', '12', 'bold')
    lblTxtPrenom.grid(row=0, column=1)
 
    lblTxtPoste = tk.Label(cadreResultat)
@@ -268,7 +327,7 @@ def popupRecherche():
    lblTxtPoste['height'] = 2
    lblTxtPoste['borderwidth'] = 2
    lblTxtPoste['relief'] = 'groove'
-   lblTxtPoste['font'] = ('Calibri', '12')
+   lblTxtPoste['font'] = ('Calibri', '12', 'bold')
    lblTxtPoste.grid(row=0, column=2)
 
    lblTxtHeures = tk.Label(cadreResultat)
@@ -279,7 +338,7 @@ def popupRecherche():
    lblTxtHeures['height'] = 2
    lblTxtHeures['borderwidth'] = 2
    lblTxtHeures['relief'] = 'groove'
-   lblTxtHeures['font'] = ('Calibri', '12')
+   lblTxtHeures['font'] = ('Calibri', '12', 'bold')
    lblTxtHeures.grid(row=0, column=3)
 
    lblTxtSalaire = tk.Label(cadreResultat)
@@ -290,8 +349,35 @@ def popupRecherche():
    lblTxtSalaire['height'] = 2
    lblTxtSalaire['borderwidth'] = 2
    lblTxtSalaire['relief'] = 'groove'
-   lblTxtSalaire['font'] = ('Calibri', '12')
+   lblTxtSalaire['font'] = ('Calibri', '12', 'bold')
    lblTxtSalaire.grid(row=0, column=4)
+
+   # - Porchain page
+   btnProchain = tk.Button(recherche)
+   btnProchain['image'] = imgFlecheDroite
+   btnProchain['relief'] = 'flat'
+   btnProchain['bg'] = '#ffffff'
+   btnProchain['fg'] = '#000000'
+   btnProchain['font'] = ('Calibri', '12', 'bold')
+   btnProchain['command'] = prochainRecherche
+   btnProchain.grid(row=5, column=3, sticky='e')
+
+   # - Page précédente
+   btnPrecedent = tk.Button(recherche)
+   btnPrecedent['image'] = imgFlecheGauche
+   btnPrecedent['relief'] = 'flat'
+   btnPrecedent['bg'] = '#ffffff'
+   btnPrecedent['fg'] = '#000000'
+   btnPrecedent['font'] = ('Calibri', '12', 'bold')
+   btnPrecedent['command'] = precedentRecherche
+   btnPrecedent.grid(row=5, column=0, sticky='w')
+
+   lblPagee = tk.Label(recherche)
+   lblPagee['text'] = 'Page {} sur {}'.format(1,1)
+   lblPagee['bg'] = '#ffffff'
+   lblPagee['fg'] = '#000000'
+   lblPagee['font'] = ('Calibri', '12', 'bold')
+   lblPagee.grid(row=5, column=1, columnspan=2)
 
 def config():
    global impotretenu, heurespourbonis, tauxbonis, cadreConfiguration
@@ -365,7 +451,7 @@ def soumettre():
    global heures_pour_bonis, impot_retenu, bonis, impotretenu, heurespourbonis, tauxbonis
 
    if impotretenu.get() == "" or heurespourbonis.get() == "" or tauxbonis.get() == "":
-      erreur("Remplir tous les cases ou quitter pour ne pas changer les variables", "Configuration")
+      erreur("Remplir toutes les cases ou quitter pour ne pas changer les variables", "Configuration")
    else:
       if sinombre(impotretenu.get()) == False:
          erreur("L'impôt retenu doit être un nombre", "Configuration")
@@ -480,7 +566,6 @@ def soumettrePref():
 
       fenetre.destroy()
       cadre()
-      update()
    except:
       erreur("Couleur inconnue", "Preferences" )
    
@@ -530,7 +615,7 @@ def erreur(message, endroit):
       pass
 
 def cadre():
-   global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers
+   global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers, imgFlecheDroite, imgFlecheGauche
    # - Fenetre
    fenetre = tk.Tk()
    fenetre.title("Comptabilité")
@@ -786,7 +871,7 @@ def instructions():
 
 # - Fonctions pour cadre
 def update(x):
-   global employes, rows, groupes, page_courant, employesTrouves, cadreRecherche, cadreResultat
+   global employes, rows, groupes, page_courant, employesTrouves, cadreRecherche, cadreResultat, page_courant_recherche, groupesrecherche
 
    if x == "recherche": 
       for i in cadreResultat.winfo_children():
@@ -795,7 +880,10 @@ def update(x):
          else:
             pass
 
-      for i, trouve in enumerate(employesTrouves):
+      updatePage("Recherche")
+
+      groupe_courant = groupesrecherche[page_courant_recherche-1]
+      for i, trouve in enumerate(groupe_courant):
          lblPersonne = tk.Label(cadreResultat)
          lblPersonne['text'] = trouve["nom"]
          lblPersonne['bg'] = '#ffffff'
@@ -852,7 +940,7 @@ def update(x):
          else:
             pass
             
-      updatePage()
+      updatePage("Ajout")
 
       groupe_courant = groupes[page_courant-1]
       for i, employe in enumerate(groupe_courant):
