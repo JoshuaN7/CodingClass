@@ -24,6 +24,8 @@ Faire des ajouts pour rendre l'expérience usager intéressante.
 
 # - Importaion des modules ------------------------------------------------------------------------------------------
 import tkinter as tk
+# - Pour validation des couleurs
+import re
 
 
 # - Programme principal ------------------------------------------------------------------------------------------
@@ -469,108 +471,84 @@ def soumettre():
          bonis = float(tauxbonis.get())
          cadreConfiguration.destroy()
 
-def pref():
-   global cadrePref, couleur, couleur2, boite
-   cadrePref = tk.Toplevel()
-   cadrePref['bg'] = arriereplan1
-   cadrePref.title("Préférences")
-   cadrePref.geometry("600x380")
+def emplois():
+   global nomemploi, tauxemploi, emplois
+   emplois = tk.Toplevel()
+   emplois['bg'] = arriereplan1
+   emplois.title("Emplois")
+   emplois.geometry("500x380")
 
-   lblPref = tk.Label(cadrePref)
-   lblPref['text'] = "Préférences \n(Utiliser des codes hexadécimaux (ex: #000000)\n(Cliquer sur soummetre recommencera le programme))"
-   lblPref['bg'] = arriereplan1
-   lblPref['fg'] = '#000000'
-   lblPref['font'] = ('Calibri', '12', 'bold')
-   lblPref.grid(row=0, column=0, columnspan=2, pady=20, padx=100)
+   lblEmplois = tk.Label(emplois)
+   lblEmplois['text'] = "Configuration des emplois/postes"
+   lblEmplois['bg'] = arriereplan1
+   lblEmplois['fg'] = '#000000'
+   lblEmplois['font'] = ('Calibri', '12', 'bold')
+   lblEmplois.grid(row=0, column=0, columnspan=2, pady=20, padx=130)
 
-   lblCouleur = tk.Label(cadrePref)
-   lblCouleur['text'] = "Couleur de l'arrière-plan"
-   lblCouleur['bg'] = arriereplan1
-   lblCouleur['fg'] = '#000000'
-   lblCouleur['font'] = ('Calibri', '12')
-   lblCouleur.grid(row=1, column=0, pady=20)
+   lblNom = tk.Label(emplois)
+   lblNom['text'] = "Nom"
+   lblNom['bg'] = arriereplan1
+   lblNom['fg'] = '#000000'
+   lblNom['font'] = ('Calibri', '12')
+   lblNom.grid(row=1, column=0, pady=20)
 
-   couleur = tk.StringVar()
-   entCouleur = tk.Entry(cadrePref)
-   entCouleur['bg'] = boites
-   entCouleur['fg'] = '#000000'
-   entCouleur['textvariable'] = couleur
-   entCouleur['font'] = ('Calibri', '12')
-   entCouleur.grid(row=1, column=1, pady=20)
+   nomemploi = tk.StringVar()
+   entlblNom = tk.Entry(emplois)
+   entlblNom['bg'] = boites
+   entlblNom['fg'] = '#000000'
+   entlblNom['textvariable'] = nomemploi
+   entlblNom['font'] = ('Calibri', '12')
+   entlblNom.grid(row=1, column=1, pady=20)
 
-   lblCouleur2 = tk.Label(cadrePref)
-   lblCouleur2['text'] = "Couleur des cellules"
-   lblCouleur2['bg'] = arriereplan1
-   lblCouleur2['fg'] = '#000000'
-   lblCouleur2['font'] = ('Calibri', '12')
-   lblCouleur2.grid(row=2, column=0, pady=20)
+   lblTaux = tk.Label(emplois)
+   lblTaux['text'] = "Taux ($/h)"
+   lblTaux['bg'] = arriereplan1
+   lblTaux['fg'] = '#000000'
+   lblTaux['font'] = ('Calibri', '12')
+   lblTaux.grid(row=2, column=0, pady=20)
 
-   couleur2 = tk.StringVar()
-   entCouleur2 = tk.Entry(cadrePref)
-   entCouleur2['bg'] = boites
-   entCouleur2['fg'] = '#000000'
-   entCouleur2['textvariable'] = couleur2
-   entCouleur2['font'] = ('Calibri', '12')
-   entCouleur2.grid(row=2, column=1, pady=20)
+   tauxemploi = tk.StringVar()
+   entlblTaux = tk.Entry(emplois)
+   entlblTaux['bg'] = boites
+   entlblTaux['fg'] = '#000000'
+   entlblTaux['textvariable'] = tauxemploi
+   entlblTaux['font'] = ('Calibri', '12')
+   entlblTaux.grid(row=2, column=1, pady=20)
 
-   boite = tk.StringVar()
-   lblBoite = tk.Label(cadrePref)
-   lblBoite['text'] = "Couleur des bouttons"
-   lblBoite['bg'] = arriereplan1
-   lblBoite['fg'] = '#000000'
-   lblBoite['font'] = ('Calibri', '12')
-   lblBoite.grid(row=3, column=0, pady=20)
+   btnSoumettre = tk.Button(emplois)
+   btnSoumettre['text'] = "Ajouter"
+   btnSoumettre['bg'] = boites
+   btnSoumettre['fg'] = '#000000'
+   btnSoumettre['font'] = ('Calibri', '12')
+   btnSoumettre['command'] = soumettreEmplois
+   btnSoumettre.grid(row=3, column=0, columnspan=2, pady=20)
 
-   entBoite = tk.Entry(cadrePref)
-   entBoite['bg'] = boites
-   entBoite['fg'] = '#000000'
-   entBoite['textvariable'] = boite
-   entBoite['font'] = ('Calibri', '12')
-   entBoite.grid(row=3, column=1, pady=20)
+def soumettreEmplois():
+   global nomemploi, tauxemploi, emplois, lblErreur, dropPoste, poste
 
-   btnSoumettrePref = tk.Button(cadrePref)
-   btnSoumettrePref['text'] = "Soumettre"
-   btnSoumettrePref['bg'] = boites
-   btnSoumettrePref['fg'] = '#000000'
-   btnSoumettrePref['font'] = ('Calibri', '12')
-   btnSoumettrePref['command'] = soumettrePref
-   btnSoumettrePref.grid(row=4, column=0, columnspan=2, pady=20)
+   if nomemploi.get() == "" or tauxemploi.get() == "":
+      erreur("Remplir toutes les cases ou quitter pour ne pas ajouter des postes", "Preferences")
+   else:
+      if sinombre(tauxemploi.get()) == False:
+         erreur("Le taux d'emploi doit être un nombre", "Preferences")
+      else:
+         try:
+            lblErreur.destroy()
+         except:
+            pass
+         postesoptions['{}'.format(nomemploi.get())] = float(tauxemploi.get())
+         dropPoste.destroy()
+
+         poste = tk.StringVar()
+         poste.set("Poste")
+         dropPoste = tk.OptionMenu(cadreEmployersEntry, poste, *postesoptions)
+         dropPoste['bg'] = boites
+         dropPoste['fg'] = '#000000'
+         dropPoste['font'] = ('Calibri', '12')
+         dropPoste.grid(row=1, column=2)
 
 
-def soumettrePref():
-   global arriereplan1, arriereplan2, boites, cadreResultat, cadrePref, cadreEmployers, cadreEmployersEntry, cadreConfiguration
-   arriereplan1 = couleur.get()
-   arriereplan2 = couleur2.get()
-   boites = boite.get()
-   try:
-      lblAPlan1 = tk.Label(cadrePref)
-      lblAPlan1['text'] = "Arrière plan 1"
-      lblAPlan1['bg'] = arriereplan1
-      lblAPlan1['fg'] = '#000000'
-      lblAPlan1['font'] = ('Calibri', '12')
-      lblAPlan1.grid(row=0, column=0)
-
-      lblAPlan2 = tk.Label(cadrePref)
-      lblAPlan2['text'] = "Arrière plan 2"
-      lblAPlan2['bg'] = arriereplan2
-      lblAPlan2['fg'] = '#000000'
-      lblAPlan2['font'] = ('Calibri', '12')
-      lblAPlan2.grid(row=1, column=0)
-
-      lblBoite = tk.Label(cadrePref)
-      lblBoite['text'] = "Arrière plan 2"
-      lblBoite['bg'] = boites
-      lblBoite['fg'] = '#000000'
-      lblBoite['font'] = ('Calibri', '12')
-      lblBoite.grid(row=2, column=0)
-
-      fenetre.destroy()
-      cadre()
-   except:
-      erreur("Couleur inconnue", "Preferences" )
    
-
-
 def sinombre(x):
    try:
       float(x)
@@ -605,7 +583,7 @@ def erreur(message, endroit):
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=5, column=0, columnspan=3, sticky='nsew')
    elif endroit == "Preferences":
-      lblErreur = tk.Label(cadrePref)
+      lblErreur = tk.Label(emplois)
       lblErreur['text'] = message
       lblErreur['bg'] = arriereplan1
       lblErreur['fg'] = '#ff0000'
@@ -615,7 +593,7 @@ def erreur(message, endroit):
       pass
 
 def cadre():
-   global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers, imgFlecheDroite, imgFlecheGauche
+   global lblTxttNom, lblTxttPrenom, lblTxttHeures, lblTxttSalaire, lblTxttPoste, entNom, entPrenom, entHeures, lblPage, nom, prenom, heures, poste, fenetre, cadreEmployersEntry, cadreEmployers, imgFlecheDroite, imgFlecheGauche, dropPoste
    # - Fenetre
    fenetre = tk.Tk()
    fenetre.title("Comptabilité")
@@ -644,7 +622,7 @@ def cadre():
 
    mnuBarreMenu.add_cascade(label="Options", menu=mnuOptions)
    mnuOptions.add_command(label="Configuration", command=config)
-   mnuOptions.add_command(label="Préférences", command=pref)
+   mnuOptions.add_command(label="Emplois", command=emplois)
 
    # - images
    imgFlecheGauche = tk.PhotoImage(file="flechegauche.gif")
@@ -851,7 +829,7 @@ def instructions():
    lblInstructions.grid(row=0, column=0, sticky='nsew', pady = 30, padx=340)
 
    lblComment = tk.Label(cadreInstructions)
-   lblComment['text'] = 'Bienvenue à un programme de comptabilité pour restaurants. Ce programme est capable de calculer le salaire de \nchaque employé, ainsi que le bonis qui doit y être ajouté, selon le nombre d\'heures travaillées et quel poste l\'employé a.\n Par défaut le programme calcule le salaire avec un import retenu sur le salaire de {} %, {} heures de travail \npour reçevoir un bonis de {} % sur le salaire. \n(Ces options peuvent être configurés dans le programme via le menu de configuration).\n\n Les couleurs utilisées dans l\'interface graphique peuvent être configurées dans le menu de préférences. '.format(impot_retenu*100, heures_pour_bonis, bonis)
+   lblComment['text'] = 'Bienvenue à un programme de comptabilité pour restaurants. Ce programme est capable de calculer le salaire de \nchaque employé, ainsi que le bonis qui doit y être ajouté, selon le nombre d\'heures travaillées et quel poste l\'employé a.\n Par défaut le programme calcule le salaire avec un import retenu sur le salaire de {} %, {} heures de travail \npour reçevoir un bonis de {} % sur le salaire. \n(Ces options peuvent être configurés dans le programme via le menu de configuration).\n\n Les options d\'emplois peuvent être configurées via le menu d\'emplois. '.format(impot_retenu*100, heures_pour_bonis, bonis)
    lblComment['bg'] = arriereplan1
    lblComment['fg'] = '#000000'
    lblComment['font'] = ('Calibri', '12')
