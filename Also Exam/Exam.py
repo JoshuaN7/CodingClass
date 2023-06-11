@@ -25,7 +25,6 @@ Faire des ajouts pour rendre l'expérience usager intéressante.
 # - Importaion des modules ------------------------------------------------------------------------------------------
 import tkinter as tk
 
-#ADD BONUSESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 
 # - Programme principal ------------------------------------------------------------------------------------------
 
@@ -299,7 +298,7 @@ def config():
    cadreConfiguration = tk.Toplevel()
    cadreConfiguration['bg'] = arriereplan1
    cadreConfiguration.title("Configuration")
-   cadreConfiguration.geometry("500x370")
+   cadreConfiguration.geometry("500x380")
 
    lblConfiguration = tk.Label(cadreConfiguration)
    lblConfiguration['text'] = "Configuration des variables \n (Valeurs décimales avec un point (ex: 0.5))"
@@ -365,21 +364,24 @@ def config():
 def soumettre():
    global heures_pour_bonis, impot_retenu, bonis, impotretenu, heurespourbonis, tauxbonis
 
-   if sinombre(impotretenu.get()) == False:
-      erreur("L'impôt retenu doit être un nombre", "Configuration")
-   elif sinombre(heurespourbonis.get()) == False:
-      erreur("Les heures pour bonis doivent être un nombre", "Configuration")
-   elif sinombre(tauxbonis.get()) == False:
-      erreur("Le taux de bonis doit être un nombre", "Configuration")
+   if impotretenu.get() == "" or heurespourbonis.get() == "" or tauxbonis.get() == "":
+      erreur("Remplir tous les cases ou quitter pour ne pas changer les variables", "Configuration")
    else:
-      try:
-         lblErreur.destroy()
-      except:
-         pass
-      impot_retenu = float(impotretenu.get())
-      heures_pour_bonis = float(heurespourbonis.get())
-      bonis = float(tauxbonis.get())
-      cadreConfiguration.destroy()
+      if sinombre(impotretenu.get()) == False:
+         erreur("L'impôt retenu doit être un nombre", "Configuration")
+      elif sinombre(heurespourbonis.get()) == False:
+         erreur("Les heures pour bonis doivent être un nombre", "Configuration")
+      elif sinombre(tauxbonis.get()) == False:
+         erreur("Le taux de bonis doit être un nombre", "Configuration")
+      else:
+         try:
+            lblErreur.destroy()
+         except:
+            pass
+         impot_retenu = float(impotretenu.get())
+         heures_pour_bonis = float(heurespourbonis.get())
+         bonis = float(tauxbonis.get())
+         cadreConfiguration.destroy()
 
 def pref():
    global cadrePref, couleur, couleur2, boite
@@ -454,9 +456,33 @@ def soumettrePref():
    arriereplan1 = couleur.get()
    arriereplan2 = couleur2.get()
    boites = boite.get()
-   fenetre.destroy()
-   cadre()
-   update()
+   try:
+      lblAPlan1 = tk.Label(cadrePref)
+      lblAPlan1['text'] = "Arrière plan 1"
+      lblAPlan1['bg'] = arriereplan1
+      lblAPlan1['fg'] = '#000000'
+      lblAPlan1['font'] = ('Calibri', '12')
+      lblAPlan1.grid(row=0, column=0)
+
+      lblAPlan2 = tk.Label(cadrePref)
+      lblAPlan2['text'] = "Arrière plan 2"
+      lblAPlan2['bg'] = arriereplan2
+      lblAPlan2['fg'] = '#000000'
+      lblAPlan2['font'] = ('Calibri', '12')
+      lblAPlan2.grid(row=1, column=0)
+
+      lblBoite = tk.Label(cadrePref)
+      lblBoite['text'] = "Arrière plan 2"
+      lblBoite['bg'] = boites
+      lblBoite['fg'] = '#000000'
+      lblBoite['font'] = ('Calibri', '12')
+      lblBoite.grid(row=2, column=0)
+
+      fenetre.destroy()
+      cadre()
+      update()
+   except:
+      erreur("Couleur inconnue", "Preferences" )
    
 
 
@@ -493,6 +519,13 @@ def erreur(message, endroit):
       lblErreur['fg'] = '#ff0000'
       lblErreur['font'] = ('Calibri', '12', 'bold')
       lblErreur.grid(row=5, column=0, columnspan=3, sticky='nsew')
+   elif endroit == "Preferences":
+      lblErreur = tk.Label(cadrePref)
+      lblErreur['text'] = message
+      lblErreur['bg'] = arriereplan1
+      lblErreur['fg'] = '#ff0000'
+      lblErreur['font'] = ('Calibri', '12', 'bold')
+      lblErreur.grid(row=5, column=0, columnspan=2, sticky='nsew')
    else:
       pass
 
@@ -721,24 +754,31 @@ def cadre():
    fenetre.mainloop()
 
 def instructions():
-   cadreInsturctions = tk.Frame(fenetre)
-   cadreInsturctions['bg'] = arriereplan1
-   cadreInsturctions.grid(row=0, column=0, rowspan=6, columnspan=4, sticky='nsew')
+   cadreInstructions = tk.Frame(fenetre)
+   cadreInstructions['bg'] = arriereplan1
+   cadreInstructions.grid(row=0, column=0, rowspan=6, columnspan=4, sticky='nsew')
 
-   lblInstructions = tk.Label(cadreInsturctions)
+   lblInstructions = tk.Label(cadreInstructions)
    lblInstructions['text'] = 'Instructions'
    lblInstructions['bg'] = arriereplan1
    lblInstructions['fg'] = '#000000'
-   lblInstructions['font'] = ('Calibri', '12', 'bold')
-   lblInstructions.grid(row=0, column=0, sticky='nsew')
+   lblInstructions['font'] = ('Calibri', '20', 'bold')
+   lblInstructions.grid(row=0, column=0, sticky='nsew', pady = 30, padx=340)
 
-   btnFermer = tk.Button(cadreInsturctions)
+   lblComment = tk.Label(cadreInstructions)
+   lblComment['text'] = 'Bienvenue à un programme de comptabilité pour restaurants. Ce programme est capable de calculer le salaire de \nchaque employé, ainsi que le bonis qui doit y être ajouté, selon le nombre d\'heures travaillées et quel poste l\'employé a.\n Par défaut le programme calcule le salaire avec un import retenu sur le salaire de {} %, {} heures de travail \npour reçevoir un bonis de {} % sur le salaire. \n(Ces options peuvent être configurés dans le programme via le menu de configuration).\n\n Les couleurs utilisées dans l\'interface graphique peuvent être configurées dans le menu de préférences. '.format(impot_retenu*100, heures_pour_bonis, bonis)
+   lblComment['bg'] = arriereplan1
+   lblComment['fg'] = '#000000'
+   lblComment['font'] = ('Calibri', '12')
+   lblComment.grid(row=1, column=0, sticky='nsew', pady = 20)
+
+   btnFermer = tk.Button(cadreInstructions)
    btnFermer['text'] = 'Continuer'
    btnFermer['bg'] = '#ffffff'
    btnFermer['fg'] = '#000000'
    btnFermer['font'] = ('Calibri', '12', 'bold')
-   btnFermer['command'] = cadreInsturctions.destroy
-   btnFermer.grid(row=1, column=0)
+   btnFermer['command'] = cadreInstructions.destroy
+   btnFermer.grid(row=2, column=0, pady=20)
 
    
 
