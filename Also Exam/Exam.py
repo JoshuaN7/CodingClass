@@ -24,18 +24,19 @@ Faire des ajouts pour rendre l'expérience usager intéressante.
 
 # - Importaion des modules ------------------------------------------------------------------------------------------
 import tkinter as tk
-# - Pour validation des couleurs
-import re
-
 
 # - Programme principal ------------------------------------------------------------------------------------------
 
 # - Variables
-TEST = True
+TEST = False
+
+# - Pages
 entreesParPage = 10
 entreesParPageRecherche = 5
 page_courant = 1
 page_courant_recherche = 1
+
+# - Employés, postes, groupes
 employes = []
 groupes = []
 groupesrecherche = []
@@ -45,11 +46,17 @@ postesoptions = {
    'Plongeur' : 28.98,
    'Caissier' : 15.98
 }
+
+# - Chiffres importants qui affectent le salaire
 impot_retenu = 0.105  #10,5% de retenu sur le salaire
 heures_pour_bonis = 160
 bonis = 5
+
+# - Recherche
 types = ["Nom", "Prenom", "Poste", "Heures", "Salaire"]
 employesTrouves = []
+
+# - Couleurs
 arriereplan1 = '#8cbbf1'
 arriereplan2 = '#d7dde9'
 boites = '#fdfdff'
